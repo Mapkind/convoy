@@ -362,7 +362,7 @@ function update() {
         score++;
         scoreDisplay.textContent = `Score: ${score}`;
         if (score % 10 === 0) {
-            interval = Math.max(50, interval - 5);
+            interval = Math.max(50, interval - 8);
             speed++;
             speedDisplay.textContent = `Speed: ${speed}`;
         }
