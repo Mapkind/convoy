@@ -17,8 +17,11 @@
         canvas {
             border: 1px solid #fff;
         }
-        #scoreDisplay, #speedDisplay {
+        #scoreDisplay, #speedDisplay, #leaderboard {
             font-family: 'Press Start 2P', sans-serif;
+        }
+        #leaderboardList {
+            padding-left: 50px; /* Optional for better alignment */
         }
     </style>
 </head>
@@ -26,22 +29,39 @@
     <div id="scoreDisplay" style="position: absolute; color: white; font-size: 20px;">Score: 0</div>
     <div id="speedDisplay" style="position: absolute; color: white; font-size: 20px;">Speed: 1</div>
     <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <div id="leaderboard" style="position: absolute; top: 10px; left: 10px; color: white; font-size: 16px;">
+        <h3>Leaderboard</h3>
+        <ol id="leaderboardList"></ol>
+    </div>
+    <button id="restartButton" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 20px; padding: 10px;">Restart</button>
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const scoreDisplay = document.getElementById('scoreDisplay');
         const speedDisplay = document.getElementById('speedDisplay');
+        const leaderboardList = document.getElementById('leaderboardList');
+        const restartButton = document.getElementById('restartButton');
 
         const gridSize = 20;
         const tileCount = canvas.width / gridSize;
 
-        let snake = [{ x: 10, y: 10 }];
-        let direction = { x: 1, y: 0 }; // Start moving to the right
-        let food;
-        let gameOver = false;
-        let score = 0; // Initialize score
-        let speed = 1; // Initialize speed
-        let interval = 200; // Initial game loop interval
+        let snake, direction, food, gameOver, score, speed, interval, gameLoopInterval;
+
+        let leaderboard = []; // Array to store leaderboard entries
+
+        function resetGame() {
+            snake = [{ x: 10, y: 10 }];
+            direction = { x: 1, y: 0 }; // Start moving to the right
+            food = generateFood();
+            gameOver = false;
+            score = 0; // Reset score
+            speed = 1; // Reset speed
+            interval = 200; // Reset game loop interval
+            scoreDisplay.textContent = `Score: ${score}`;
+            speedDisplay.textContent = `Speed: ${speed}`;
+            restartButton.style.display = 'none'; // Hide the restart button
+            gameLoopInterval = setInterval(gameLoop, interval); // Start the game loop
+        }
 
         function positionDisplays() {
             const canvasRect = canvas.getBoundingClientRect();
@@ -63,14 +83,25 @@
             return newFood;
         }
 
-        food = generateFood();
-
         function draw() {
             if (gameOver) {
                 ctx.fillStyle = 'red';
                 ctx.font = '20px "Press Start 2P"';
                 ctx.textAlign = 'center';
                 ctx.fillText('Game Over', canvas.width / 2, canvas.height / 2);
+
+                // Prompt for name if score qualifies for leaderboard
+                if (leaderboard.length < 10 || score > leaderboard[leaderboard.length - 1].score) {
+                    const name = prompt('Game Over! Enter your name:');
+                    if (name) {
+                        leaderboard.push({ name, score });
+                        leaderboard.sort((a, b) => b.score - a.score); // Sort leaderboard by score
+                        leaderboard = leaderboard.slice(0, 10); // Keep only top 10 scores
+                        updateLeaderboard();
+                    }
+                }
+
+                restartButton.style.display = 'block'; // Show the restart button
                 return;
             }
 
@@ -84,13 +115,26 @@
             ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize, gridSize);
         }
 
+        function updateLeaderboard() {
+            leaderboardList.innerHTML = '';
+            leaderboard.forEach(entry => {
+                const li = document.createElement('li');
+                li.textContent = `${entry.name}: ${entry.score}`;
+                leaderboardList.appendChild(li);
+            });
+        }
+
         function update() {
-            if (gameOver) return;
+            if (gameOver) {
+                clearInterval(gameLoopInterval); // Stop the game loop
+                return;
+            }
 
             const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
 
             if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount || snake.some(segment => segment.x === head.x && segment.y === head.y)) {
                 gameOver = true;
+                clearInterval(gameLoopInterval); // Stop the game loop
                 return;
             }
 
@@ -119,8 +163,9 @@
             draw();
         }
 
-        let gameLoopInterval = setInterval(gameLoop, interval); // Start the game loop
+        restartButton.addEventListener('click', resetGame); // Add event listener to restart button
 
+        resetGame(); // Start the initial game
         window.addEventListener('keydown', e => {
             switch (e.key) {
                 case 'ArrowUp':
