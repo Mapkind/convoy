@@ -50,12 +50,17 @@
         const gridSize = 20;
         const tileCount = canvas.width / gridSize;
 
+
 let snake, direction, food, gameOver, score, speed, interval;
 let countdown = 0;
 let countdownInterval = null;
 let animProgress = 1;
 let lastFrameTime = null;
 let prevSnake = null;
+
+// For the pop effect on the larger head
+let headPopActive = false;
+let headPopTimer = null;
 
         let leaderboard = []; // Array to store leaderboard entries
 
@@ -114,6 +119,7 @@ function startGame() {
             return newFood;
         }
 
+
         function draw() {
             // Draw background
             ctx.fillStyle = '#000';
@@ -121,7 +127,7 @@ function startGame() {
 
             // Draw countdown if active
             if (countdown > 0) {
-                ctx.fillStyle = 'white';
+                ctx.fillStyle = 'purple';
                 ctx.font = `${Math.floor(canvas.width * 0.8)}px 'Press Start 2P', sans-serif`;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
@@ -151,9 +157,6 @@ function startGame() {
                 restartButton.style.display = 'block'; // Show the restart button
                 return;
             }
-
-
-
 
             // Draw snake body (excluding head and tail) as circles, interpolated
             ctx.fillStyle = 'lime';
@@ -201,6 +204,24 @@ function startGame() {
                 let prevA = prevSnake && prevSnake[snake.length - 2] ? prevSnake[snake.length - 2] : snake[snake.length - 2];
                 let prevB = prevSnake && prevSnake[snake.length - 1] ? prevSnake[snake.length - 1] : snake[snake.length - 1];
                 drawJunctionCircle(snake[snake.length - 2], snake[snake.length - 1], prevA, prevB);
+            }
+
+            // Draw the always-present, 40% larger, transparent head overlay
+            if (snake.length > 0) {
+                let seg = snake[0];
+                let prevSeg = prevSnake && prevSnake[0] ? prevSnake[0] : seg;
+                let x = (prevSeg.x + (seg.x - prevSeg.x) * animProgress) * gridSize + gridSize / 2;
+                let y = (prevSeg.y + (seg.y - prevSeg.y) * animProgress) * gridSize + gridSize / 2;
+                let r = gridSize / 2;
+                // Draw the larger overlay (40% larger)
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(x, y, r * 1.4, 0, 2 * Math.PI);
+                ctx.globalAlpha = headPopActive ? 1.0 : 0.0;
+                ctx.fillStyle = 'lime';
+                ctx.fill();
+                ctx.globalAlpha = 1.0;
+                ctx.restore();
             }
 
             // Draw snake head as a circle, interpolated
@@ -315,6 +336,12 @@ function update() {
             speed++;
             speedDisplay.textContent = `Speed: ${speed}`;
         }
+        // Activate the pop effect for 0.5s
+        headPopActive = true;
+        if (headPopTimer) clearTimeout(headPopTimer);
+        headPopTimer = setTimeout(() => {
+            headPopActive = false;
+        }, 500);
     } else {
         snake.pop();
     }
