@@ -29,8 +29,18 @@
 
         let snake = [{ x: 10, y: 10 }];
         let direction = { x: 0, y: 0 };
-        let food = { x: Math.floor(Math.random() * tileCount), y: Math.floor(Math.random() * tileCount) };
+        let food;
         let gameOver = false;
+
+        function generateFood() {
+            let newFood;
+            do {
+                newFood = { x: Math.floor(Math.random() * tileCount), y: Math.floor(Math.random() * tileCount) };
+            } while (snake.some(segment => segment.x === newFood.x && segment.y === newFood.y));
+            return newFood;
+        }
+
+        food = generateFood();
 
         function draw() {
             if (gameOver) {
@@ -63,7 +73,7 @@
             snake.unshift(head);
 
             if (head.x === food.x && head.y === food.y) {
-                food = { x: Math.floor(Math.random() * tileCount), y: Math.floor(Math.random() * tileCount) };
+                food = generateFood();
             } else {
                 snake.pop();
             }
