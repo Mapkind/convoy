@@ -118,11 +118,126 @@
             ctx.fillStyle = '#000';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            ctx.fillStyle = 'lime';
-            snake.forEach(segment => ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize, gridSize));
 
+            // Draw snake body (excluding head and tail) as circles
+            ctx.fillStyle = 'lime';
+            for (let i = 1; i < snake.length - 1; i++) {
+                const segment = snake[i];
+                let x = segment.x * gridSize + gridSize / 2;
+                let y = segment.y * gridSize + gridSize / 2;
+                let r = gridSize / 2;
+                ctx.beginPath();
+                ctx.arc(x, y, r, 0, 2 * Math.PI);
+                ctx.fill();
+            }
+
+            // Draw extra circles where body segments meet (including head and tail junctions)
+            ctx.fillStyle = 'lime';
+            let drawJunctionCircle = (segA, segB) => {
+                if (Math.abs(segA.x - segB.x) + Math.abs(segA.y - segB.y) === 1) {
+                    let x = (segA.x + segB.x) / 2 * gridSize + gridSize / 2;
+                    let y = (segA.y + segB.y) / 2 * gridSize + gridSize / 2;
+                    let r = gridSize / 2;
+                    ctx.beginPath();
+                    ctx.arc(x, y, r, 0, 2 * Math.PI);
+                    ctx.fill();
+                }
+            };
+            // Head junction
+            if (snake.length > 1) {
+                drawJunctionCircle(snake[0], snake[1]);
+            }
+            // Body junctions
+            for (let i = 1; i < snake.length - 2; i++) {
+                drawJunctionCircle(snake[i], snake[i + 1]);
+            }
+            // Tail junction
+            if (snake.length > 2) {
+                drawJunctionCircle(snake[snake.length - 2], snake[snake.length - 1]);
+            }
+
+            // Draw snake head as a circle not overlapping the preceding segment
+            if (snake.length > 0) {
+                const head = snake[0];
+                let x = head.x * gridSize + gridSize / 2;
+                let y = head.y * gridSize + gridSize / 2;
+                let r = gridSize / 2;
+                ctx.fillStyle = 'lime';
+                ctx.beginPath();
+                ctx.arc(x, y, r, 0, 2 * Math.PI);
+                ctx.fill();
+            }
+
+            // Draw snake tail as a triangle pointing away from the preceding body segment
+            if (snake.length > 1) {
+                const tail = snake[snake.length - 1];
+                const beforeTail = snake[snake.length - 2];
+                let dx = tail.x - beforeTail.x;
+                let dy = tail.y - beforeTail.y;
+                ctx.fillStyle = 'lime';
+                ctx.beginPath();
+                let x = tail.x * gridSize;
+                let y = tail.y * gridSize;
+                if (dx === 1 && dy === 0) {
+                    // Tail is to the right of beforeTail, so triangle points right (away from body)
+                    ctx.moveTo(x, y);
+                    ctx.lineTo(x, y + gridSize);
+                    ctx.lineTo(x + gridSize, y + gridSize / 2);
+                    ctx.closePath();
+                } else if (dx === -1 && dy === 0) {
+                    // Tail is to the left of beforeTail, so triangle points left (away from body)
+                    ctx.moveTo(x + gridSize, y);
+                    ctx.lineTo(x + gridSize, y + gridSize);
+                    ctx.lineTo(x, y + gridSize / 2);
+                    ctx.closePath();
+                } else if (dx === 0 && dy === 1) {
+                    // Tail is below beforeTail, so triangle points down (away from body)
+                    ctx.moveTo(x, y);
+                    ctx.lineTo(x + gridSize, y);
+                    ctx.lineTo(x + gridSize / 2, y + gridSize);
+                    ctx.closePath();
+                } else if (dx === 0 && dy === -1) {
+                    // Tail is above beforeTail, so triangle points up (away from body)
+                    ctx.moveTo(x, y + gridSize);
+                    ctx.lineTo(x + gridSize, y + gridSize);
+                    ctx.lineTo(x + gridSize / 2, y);
+                    ctx.closePath();
+                } else {
+                    // If the tail is not adjacent, default to a square
+                    ctx.rect(x, y, gridSize, gridSize);
+                }
+                ctx.fill();
+            }
+
+            // Draw food as an apple
+            let fx = food.x * gridSize + gridSize / 2;
+            let fy = food.y * gridSize + gridSize / 2;
+            let appleRadius = gridSize * 0.45;
+            // Apple body
+            ctx.beginPath();
+            ctx.arc(fx, fy, appleRadius, 0, 2 * Math.PI);
             ctx.fillStyle = 'red';
-            ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize, gridSize);
+            ctx.shadowColor = '#900';
+            ctx.shadowBlur = 8;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+            // Apple highlight
+            ctx.beginPath();
+            ctx.arc(fx - appleRadius * 0.3, fy - appleRadius * 0.3, appleRadius * 0.2, 0, 2 * Math.PI);
+            ctx.fillStyle = 'rgba(255,255,255,0.5)';
+            ctx.fill();
+            // Apple stem
+            ctx.beginPath();
+            ctx.strokeStyle = '#654321';
+            ctx.lineWidth = 2;
+            ctx.moveTo(fx, fy - appleRadius);
+            ctx.lineTo(fx, fy - appleRadius - gridSize * 0.2);
+            ctx.stroke();
+            // Apple leaf
+            ctx.beginPath();
+            ctx.fillStyle = '#3c3';
+            ctx.ellipse(fx + gridSize * 0.13, fy - appleRadius - gridSize * 0.08, gridSize * 0.11, gridSize * 0.05, Math.PI / 6, 0, 2 * Math.PI);
+            ctx.fill();
         }
 
         function updateLeaderboard() {
