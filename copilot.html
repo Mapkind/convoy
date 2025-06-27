@@ -65,7 +65,11 @@ let headPopTimer = null;
         let leaderboard = []; // Array to store leaderboard entries
 
 function resetGame() {
-    snake = [{ x: 10, y: 10 }];
+    // Start with a head and a tail segment so the tail is always drawn
+    snake = [
+        { x: 10, y: 10 }, // head
+        { x: 9, y: 10 }   // tail, placed behind head in initial direction
+    ];
     direction = { x: 1, y: 0 };
     food = generateFood();
     gameOver = false;
