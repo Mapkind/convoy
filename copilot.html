@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Snake Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         body {
             display: flex;
@@ -16,15 +17,20 @@
         canvas {
             border: 1px solid #fff;
         }
+        #scoreDisplay, #speedDisplay {
+            font-family: 'Press Start 2P', sans-serif;
+        }
     </style>
 </head>
 <body>
     <div id="scoreDisplay" style="position: absolute; color: white; font-size: 20px;">Score: 0</div>
+    <div id="speedDisplay" style="position: absolute; color: white; font-size: 20px;">Speed: 1</div>
     <canvas id="gameCanvas" width="400" height="400"></canvas>
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const scoreDisplay = document.getElementById('scoreDisplay');
+        const speedDisplay = document.getElementById('speedDisplay');
 
         const gridSize = 20;
         const tileCount = canvas.width / gridSize;
@@ -34,15 +40,20 @@
         let food;
         let gameOver = false;
         let score = 0; // Initialize score
+        let speed = 1; // Initialize speed
+        let interval = 200; // Initial game loop interval
 
-        function positionScoreDisplay() {
+        function positionDisplays() {
             const canvasRect = canvas.getBoundingClientRect();
             scoreDisplay.style.top = `${canvasRect.top - 25}px`; // 10px above the canvas
             scoreDisplay.style.left = `${canvasRect.right - scoreDisplay.offsetWidth}px`; // Align to the right of the canvas
+
+            speedDisplay.style.top = `${canvasRect.bottom + 10}px`; // 10px below the canvas
+            speedDisplay.style.left = `${canvasRect.left}px`; // Align to the left of the canvas
         }
 
-        window.addEventListener('resize', positionScoreDisplay); // Reposition on window resize
-        positionScoreDisplay(); // Initial positioning
+        window.addEventListener('resize', positionDisplays); // Reposition on window resize
+        positionDisplays(); // Initial positioning
 
         function generateFood() {
             let newFood;
@@ -57,8 +68,9 @@
         function draw() {
             if (gameOver) {
                 ctx.fillStyle = 'red';
-                ctx.font = '20px Arial';
-                ctx.fillText('Game Over', canvas.width / 2 - 50, canvas.height / 2);
+                ctx.font = '20px "Press Start 2P"';
+                ctx.textAlign = 'center';
+                ctx.fillText('Game Over', canvas.width / 2, canvas.height / 2);
                 return;
             }
 
@@ -88,6 +100,15 @@
                 food = generateFood();
                 score++; // Increment score
                 scoreDisplay.textContent = `Score: ${score}`; // Update score display
+
+                // Increase speed every 10 food eaten
+                if (score % 10 === 0) {
+                    interval = Math.max(50, interval - 5); // Reduce interval by 5ms, minimum 50ms
+                    speed++; // Increment speed
+                    speedDisplay.textContent = `Speed: ${speed}`; // Update speed display
+                    clearInterval(gameLoopInterval); // Clear the current interval
+                    gameLoopInterval = setInterval(gameLoop, interval); // Start a new interval with updated speed
+                }
             } else {
                 snake.pop();
             }
@@ -97,6 +118,8 @@
             update();
             draw();
         }
+
+        let gameLoopInterval = setInterval(gameLoop, interval); // Start the game loop
 
         window.addEventListener('keydown', e => {
             switch (e.key) {
@@ -114,8 +137,6 @@
                     break;
             }
         });
-
-        setInterval(gameLoop, 200); // Slows down the snake by increasing the interval to 200ms
     </script>
 </body>
 </html>
