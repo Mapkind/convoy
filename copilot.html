@@ -19,18 +19,30 @@
     </style>
 </head>
 <body>
+    <div id="scoreDisplay" style="position: absolute; color: white; font-size: 20px;">Score: 0</div>
     <canvas id="gameCanvas" width="400" height="400"></canvas>
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
+        const scoreDisplay = document.getElementById('scoreDisplay');
 
         const gridSize = 20;
         const tileCount = canvas.width / gridSize;
 
         let snake = [{ x: 10, y: 10 }];
-        let direction = { x: 0, y: 0 };
+        let direction = { x: 1, y: 0 }; // Start moving to the right
         let food;
         let gameOver = false;
+        let score = 0; // Initialize score
+
+        function positionScoreDisplay() {
+            const canvasRect = canvas.getBoundingClientRect();
+            scoreDisplay.style.top = `${canvasRect.top - 25}px`; // 10px above the canvas
+            scoreDisplay.style.left = `${canvasRect.right - scoreDisplay.offsetWidth}px`; // Align to the right of the canvas
+        }
+
+        window.addEventListener('resize', positionScoreDisplay); // Reposition on window resize
+        positionScoreDisplay(); // Initial positioning
 
         function generateFood() {
             let newFood;
@@ -74,6 +86,8 @@
 
             if (head.x === food.x && head.y === food.y) {
                 food = generateFood();
+                score++; // Increment score
+                scoreDisplay.textContent = `Score: ${score}`; // Update score display
             } else {
                 snake.pop();
             }
@@ -101,7 +115,7 @@
             }
         });
 
-        setInterval(gameLoop, 100);
+        setInterval(gameLoop, 200); // Slows down the snake by increasing the interval to 200ms
     </script>
 </body>
 </html>
