@@ -23,6 +23,9 @@
         #leaderboardList {
             padding-left: 50px; /* Optional for better alignment */
         }
+        #leaderboardList li {
+            margin-bottom: 10px; /* Add 10px space between items */
+        }
     </style>
 </head>
 <body>
@@ -33,6 +36,7 @@
         <h3>Leaderboard</h3>
         <ol id="leaderboardList"></ol>
     </div>
+    <button id="startButton" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 20px; padding: 10px;">Start</button>
     <button id="restartButton" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 20px; padding: 10px;">Restart</button>
     <script>
         const canvas = document.getElementById('gameCanvas');
@@ -40,6 +44,7 @@
         const scoreDisplay = document.getElementById('scoreDisplay');
         const speedDisplay = document.getElementById('speedDisplay');
         const leaderboardList = document.getElementById('leaderboardList');
+        const startButton = document.getElementById('startButton');
         const restartButton = document.getElementById('restartButton');
 
         const gridSize = 20;
@@ -60,6 +65,11 @@
             scoreDisplay.textContent = `Score: ${score}`;
             speedDisplay.textContent = `Speed: ${speed}`;
             restartButton.style.display = 'none'; // Hide the restart button
+        }
+
+        function startGame() {
+            resetGame(); // Reset the game state
+            startButton.style.display = 'none'; // Hide the start button
             gameLoopInterval = setInterval(gameLoop, interval); // Start the game loop
         }
 
@@ -116,6 +126,7 @@
         }
 
         function updateLeaderboard() {
+            console.log('Updating leaderboard:', leaderboard);
             leaderboardList.innerHTML = '';
             leaderboard.forEach(entry => {
                 const li = document.createElement('li');
@@ -163,9 +174,9 @@
             draw();
         }
 
-        restartButton.addEventListener('click', resetGame); // Add event listener to restart button
+        startButton.addEventListener('click', startGame); // Add event listener to start button
+        restartButton.addEventListener('click', startGame); // Add event listener to restart button
 
-        resetGame(); // Start the initial game
         window.addEventListener('keydown', e => {
             switch (e.key) {
                 case 'ArrowUp':
