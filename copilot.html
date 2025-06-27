@@ -51,6 +51,8 @@
         const tileCount = canvas.width / gridSize;
 
         let snake, direction, food, gameOver, score, speed, interval, gameLoopInterval;
+        let countdown = 0;
+        let countdownInterval = null;
 
         let leaderboard = []; // Array to store leaderboard entries
 
@@ -70,7 +72,17 @@
         function startGame() {
             resetGame(); // Reset the game state
             startButton.style.display = 'none'; // Hide the start button
-            gameLoopInterval = setInterval(gameLoop, interval); // Start the game loop
+            countdown = 3;
+            draw(); // Show the initial countdown
+            countdownInterval = setInterval(() => {
+                countdown--;
+                draw();
+                if (countdown === 0) {
+                    clearInterval(countdownInterval);
+                    countdownInterval = null;
+                    gameLoopInterval = setInterval(gameLoop, interval); // Start the game loop
+                }
+            }, 1000);
         }
 
         function positionDisplays() {
@@ -94,6 +106,22 @@
         }
 
         function draw() {
+            // Draw background
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw countdown if active
+            if (countdown > 0) {
+                ctx.fillStyle = 'white';
+                ctx.font = `${Math.floor(canvas.width * 0.8)}px 'Press Start 2P', sans-serif`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.globalAlpha = 0.85;
+                ctx.fillText(countdown, canvas.width / 2, canvas.height / 2);
+                ctx.globalAlpha = 1.0;
+                return;
+            }
+
             if (gameOver) {
                 ctx.fillStyle = 'red';
                 ctx.font = '20px "Press Start 2P"';
@@ -115,8 +143,7 @@
                 return;
             }
 
-            ctx.fillStyle = '#000';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
 
 
             // Draw snake body (excluding head and tail) as circles
