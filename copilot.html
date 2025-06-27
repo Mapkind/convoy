@@ -50,40 +50,49 @@
         const gridSize = 20;
         const tileCount = canvas.width / gridSize;
 
-        let snake, direction, food, gameOver, score, speed, interval, gameLoopInterval;
-        let countdown = 0;
-        let countdownInterval = null;
+let snake, direction, food, gameOver, score, speed, interval;
+let countdown = 0;
+let countdownInterval = null;
+let animProgress = 1;
+let lastFrameTime = null;
+let prevSnake = null;
 
         let leaderboard = []; // Array to store leaderboard entries
 
-        function resetGame() {
-            snake = [{ x: 10, y: 10 }];
-            direction = { x: 1, y: 0 }; // Start moving to the right
-            food = generateFood();
-            gameOver = false;
-            score = 0; // Reset score
-            speed = 1; // Reset speed
-            interval = 200; // Reset game loop interval
-            scoreDisplay.textContent = `Score: ${score}`;
-            speedDisplay.textContent = `Speed: ${speed}`;
-            restartButton.style.display = 'none'; // Hide the restart button
-        }
+function resetGame() {
+    snake = [{ x: 10, y: 10 }];
+    direction = { x: 1, y: 0 };
+    food = generateFood();
+    gameOver = false;
+    score = 0;
+    speed = 1;
+    interval = 200;
+    scoreDisplay.textContent = `Score: ${score}`;
+    speedDisplay.textContent = `Speed: ${speed}`;
+    restartButton.style.display = 'none';
+    animProgress = 1;
+    lastFrameTime = null;
+    prevSnake = null;
+}
 
-        function startGame() {
-            resetGame(); // Reset the game state
-            startButton.style.display = 'none'; // Hide the start button
-            countdown = 3;
-            draw(); // Show the initial countdown
-            countdownInterval = setInterval(() => {
-                countdown--;
-                draw();
-                if (countdown === 0) {
-                    clearInterval(countdownInterval);
-                    countdownInterval = null;
-                    gameLoopInterval = setInterval(gameLoop, interval); // Start the game loop
-                }
-            }, 1000);
+function startGame() {
+    resetGame();
+    startButton.style.display = 'none';
+    countdown = 3;
+    draw();
+    countdownInterval = setInterval(() => {
+        countdown--;
+        draw();
+        if (countdown === 0) {
+            clearInterval(countdownInterval);
+            countdownInterval = null;
+            animProgress = 1;
+            lastFrameTime = null;
+            prevSnake = null;
+            requestAnimationFrame(frameLoop);
         }
+    }, 1000);
+}
 
         function positionDisplays() {
             const canvasRect = canvas.getBoundingClientRect();
@@ -146,24 +155,29 @@
 
 
 
-            // Draw snake body (excluding head and tail) as circles
+            // Draw snake body (excluding head and tail) as circles, interpolated
             ctx.fillStyle = 'lime';
             for (let i = 1; i < snake.length - 1; i++) {
-                const segment = snake[i];
-                let x = segment.x * gridSize + gridSize / 2;
-                let y = segment.y * gridSize + gridSize / 2;
+                let seg = snake[i];
+                let prevSeg = prevSnake && prevSnake[i] ? prevSnake[i] : seg;
+                let x = (prevSeg.x + (seg.x - prevSeg.x) * animProgress) * gridSize + gridSize / 2;
+                let y = (prevSeg.y + (seg.y - prevSeg.y) * animProgress) * gridSize + gridSize / 2;
                 let r = gridSize / 2;
                 ctx.beginPath();
                 ctx.arc(x, y, r, 0, 2 * Math.PI);
                 ctx.fill();
             }
 
-            // Draw extra circles where body segments meet (including head and tail junctions)
+            // Draw extra circles where body segments meet (including head and tail junctions), interpolated
             ctx.fillStyle = 'lime';
-            let drawJunctionCircle = (segA, segB) => {
+            let drawJunctionCircle = (segA, segB, prevA, prevB) => {
                 if (Math.abs(segA.x - segB.x) + Math.abs(segA.y - segB.y) === 1) {
-                    let x = (segA.x + segB.x) / 2 * gridSize + gridSize / 2;
-                    let y = (segA.y + segB.y) / 2 * gridSize + gridSize / 2;
+                    let xA = (prevA.x + (segA.x - prevA.x) * animProgress);
+                    let yA = (prevA.y + (segA.y - prevA.y) * animProgress);
+                    let xB = (prevB.x + (segB.x - prevB.x) * animProgress);
+                    let yB = (prevB.y + (segB.y - prevB.y) * animProgress);
+                    let x = (xA + xB) / 2 * gridSize + gridSize / 2;
+                    let y = (yA + yB) / 2 * gridSize + gridSize / 2;
                     let r = gridSize / 2;
                     ctx.beginPath();
                     ctx.arc(x, y, r, 0, 2 * Math.PI);
@@ -172,22 +186,29 @@
             };
             // Head junction
             if (snake.length > 1) {
-                drawJunctionCircle(snake[0], snake[1]);
+                let prevA = prevSnake && prevSnake[0] ? prevSnake[0] : snake[0];
+                let prevB = prevSnake && prevSnake[1] ? prevSnake[1] : snake[1];
+                drawJunctionCircle(snake[0], snake[1], prevA, prevB);
             }
             // Body junctions
             for (let i = 1; i < snake.length - 2; i++) {
-                drawJunctionCircle(snake[i], snake[i + 1]);
+                let prevA = prevSnake && prevSnake[i] ? prevSnake[i] : snake[i];
+                let prevB = prevSnake && prevSnake[i + 1] ? prevSnake[i + 1] : snake[i + 1];
+                drawJunctionCircle(snake[i], snake[i + 1], prevA, prevB);
             }
             // Tail junction
             if (snake.length > 2) {
-                drawJunctionCircle(snake[snake.length - 2], snake[snake.length - 1]);
+                let prevA = prevSnake && prevSnake[snake.length - 2] ? prevSnake[snake.length - 2] : snake[snake.length - 2];
+                let prevB = prevSnake && prevSnake[snake.length - 1] ? prevSnake[snake.length - 1] : snake[snake.length - 1];
+                drawJunctionCircle(snake[snake.length - 2], snake[snake.length - 1], prevA, prevB);
             }
 
-            // Draw snake head as a circle not overlapping the preceding segment
+            // Draw snake head as a circle, interpolated
             if (snake.length > 0) {
-                const head = snake[0];
-                let x = head.x * gridSize + gridSize / 2;
-                let y = head.y * gridSize + gridSize / 2;
+                let seg = snake[0];
+                let prevSeg = prevSnake && prevSnake[0] ? prevSnake[0] : seg;
+                let x = (prevSeg.x + (seg.x - prevSeg.x) * animProgress) * gridSize + gridSize / 2;
+                let y = (prevSeg.y + (seg.y - prevSeg.y) * animProgress) * gridSize + gridSize / 2;
                 let r = gridSize / 2;
                 ctx.fillStyle = 'lime';
                 ctx.beginPath();
@@ -195,43 +216,42 @@
                 ctx.fill();
             }
 
-            // Draw snake tail as a triangle pointing away from the preceding body segment
+            // Draw snake tail as a triangle, interpolated
             if (snake.length > 1) {
-                const tail = snake[snake.length - 1];
-                const beforeTail = snake[snake.length - 2];
-                let dx = tail.x - beforeTail.x;
-                let dy = tail.y - beforeTail.y;
+                let tail = snake[snake.length - 1];
+                let beforeTail = snake[snake.length - 2];
+                let prevTail = prevSnake && prevSnake[snake.length - 1] ? prevSnake[snake.length - 1] : tail;
+                let prevBeforeTail = prevSnake && prevSnake[snake.length - 2] ? prevSnake[snake.length - 2] : beforeTail;
+                let tx = (prevTail.x + (tail.x - prevTail.x) * animProgress) * gridSize;
+                let ty = (prevTail.y + (tail.y - prevTail.y) * animProgress) * gridSize;
+                let btx = (prevBeforeTail.x + (beforeTail.x - prevBeforeTail.x) * animProgress) * gridSize;
+                let bty = (prevBeforeTail.y + (beforeTail.y - prevBeforeTail.y) * animProgress) * gridSize;
+                let dx = Math.round((tx - btx) / gridSize);
+                let dy = Math.round((ty - bty) / gridSize);
                 ctx.fillStyle = 'lime';
                 ctx.beginPath();
-                let x = tail.x * gridSize;
-                let y = tail.y * gridSize;
                 if (dx === 1 && dy === 0) {
-                    // Tail is to the right of beforeTail, so triangle points right (away from body)
-                    ctx.moveTo(x, y);
-                    ctx.lineTo(x, y + gridSize);
-                    ctx.lineTo(x + gridSize, y + gridSize / 2);
+                    ctx.moveTo(tx, ty);
+                    ctx.lineTo(tx, ty + gridSize);
+                    ctx.lineTo(tx + gridSize, ty + gridSize / 2);
                     ctx.closePath();
                 } else if (dx === -1 && dy === 0) {
-                    // Tail is to the left of beforeTail, so triangle points left (away from body)
-                    ctx.moveTo(x + gridSize, y);
-                    ctx.lineTo(x + gridSize, y + gridSize);
-                    ctx.lineTo(x, y + gridSize / 2);
+                    ctx.moveTo(tx + gridSize, ty);
+                    ctx.lineTo(tx + gridSize, ty + gridSize);
+                    ctx.lineTo(tx, ty + gridSize / 2);
                     ctx.closePath();
                 } else if (dx === 0 && dy === 1) {
-                    // Tail is below beforeTail, so triangle points down (away from body)
-                    ctx.moveTo(x, y);
-                    ctx.lineTo(x + gridSize, y);
-                    ctx.lineTo(x + gridSize / 2, y + gridSize);
+                    ctx.moveTo(tx, ty);
+                    ctx.lineTo(tx + gridSize, ty);
+                    ctx.lineTo(tx + gridSize / 2, ty + gridSize);
                     ctx.closePath();
                 } else if (dx === 0 && dy === -1) {
-                    // Tail is above beforeTail, so triangle points up (away from body)
-                    ctx.moveTo(x, y + gridSize);
-                    ctx.lineTo(x + gridSize, y + gridSize);
-                    ctx.lineTo(x + gridSize / 2, y);
+                    ctx.moveTo(tx, ty + gridSize);
+                    ctx.lineTo(tx + gridSize, ty + gridSize);
+                    ctx.lineTo(tx + gridSize / 2, ty);
                     ctx.closePath();
                 } else {
-                    // If the tail is not adjacent, default to a square
-                    ctx.rect(x, y, gridSize, gridSize);
+                    ctx.rect(tx, ty, gridSize, gridSize);
                 }
                 ctx.fill();
             }
@@ -277,44 +297,48 @@
             });
         }
 
-        function update() {
-            if (gameOver) {
-                clearInterval(gameLoopInterval); // Stop the game loop
-                return;
-            }
-
-            const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
-
-            if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount || snake.some(segment => segment.x === head.x && segment.y === head.y)) {
-                gameOver = true;
-                clearInterval(gameLoopInterval); // Stop the game loop
-                return;
-            }
-
-            snake.unshift(head);
-
-            if (head.x === food.x && head.y === food.y) {
-                food = generateFood();
-                score++; // Increment score
-                scoreDisplay.textContent = `Score: ${score}`; // Update score display
-
-                // Increase speed every 10 food eaten
-                if (score % 10 === 0) {
-                    interval = Math.max(50, interval - 5); // Reduce interval by 5ms, minimum 50ms
-                    speed++; // Increment speed
-                    speedDisplay.textContent = `Speed: ${speed}`; // Update speed display
-                    clearInterval(gameLoopInterval); // Clear the current interval
-                    gameLoopInterval = setInterval(gameLoop, interval); // Start a new interval with updated speed
-                }
-            } else {
-                snake.pop();
-            }
+function update() {
+    if (gameOver) return;
+    const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
+    if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount || snake.some(segment => segment.x === head.x && segment.y === head.y)) {
+        gameOver = true;
+        return;
+    }
+    prevSnake = snake.map(seg => ({ ...seg }));
+    snake.unshift(head);
+    if (head.x === food.x && head.y === food.y) {
+        food = generateFood();
+        score++;
+        scoreDisplay.textContent = `Score: ${score}`;
+        if (score % 10 === 0) {
+            interval = Math.max(50, interval - 5);
+            speed++;
+            speedDisplay.textContent = `Speed: ${speed}`;
         }
+    } else {
+        snake.pop();
+    }
+    animProgress = 0;
+}
 
-        function gameLoop() {
-            update();
-            draw();
-        }
+
+function frameLoop(timestamp) {
+    if (lastFrameTime === null) lastFrameTime = timestamp;
+    let dt = timestamp - lastFrameTime;
+    lastFrameTime = timestamp;
+    let moveTime = interval;
+    if (gameOver || countdown > 0) {
+        draw();
+        return;
+    }
+    animProgress += dt / moveTime;
+    if (animProgress >= 1) {
+        animProgress = 1;
+        update();
+    }
+    draw();
+    if (!gameOver) requestAnimationFrame(frameLoop);
+}
 
         startButton.addEventListener('click', startGame); // Add event listener to start button
         restartButton.addEventListener('click', startGame); // Add event listener to restart button
