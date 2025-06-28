@@ -40,6 +40,9 @@
     <button id="startButton" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 20px; padding: 10px;">Start</button>
     <button id="restartButton" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 20px; padding: 10px;">Play Again</button>
     <script>
+        const { createClient } = supabase
+        const _supabase = createClient('https://qplxbyiotkuvsvganuhn.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFwbHhieWlvdGt1dnN2Z2FudWhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTEwNTkwMTUsImV4cCI6MjA2NjYzNTAxNX0.NM4YbUhQmlqw9ugOBEYQLgVSlg2gR3RE-sTQKRXGSvk')
+        console.log('Supabase client created:', _supabase);
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const scoreDisplay = document.getElementById('scoreDisplay');
