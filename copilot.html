@@ -57,8 +57,8 @@
         <h3>Leaderboard</h3>
         <ol id="leaderboardList"></ol>
     </div>
-    <button id="startButton" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 20px; padding: 10px;">Start</button>
-    <button id="restartButton" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 20px; padding: 10px;">Play Again</button>
+    <button id="startButton" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 20px; padding: 10px;">Start!</button>
+    <button id="restartButton" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 20px; padding: 10px;">Start!</button>
 
     <div id="authModal" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
         <h3 id="authModalTitle">Log In</h3>
@@ -502,7 +502,7 @@ function startGame() {
 
         const authModal = document.getElementById('authModal');
         const authForm = document.getElementById('authForm');
-        const emailInput = document.getElementById('email');
+        let emailInput = document.getElementById('email');
         const toggleAuthMode = document.getElementById('toggleAuthMode');
         const authModalTitle = document.getElementById('authModalTitle');
 
@@ -614,12 +614,13 @@ function startGame() {
 
         authForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            emailInput = document.getElementById('email');
             const email = emailInput.value;
 
             if (isSignUpMode) {
                 // Sign-up logic
                 //const name = document.getElementById('name')?.value || ''; // Optional name field for sign-up
-                
+                console.log('Submitting magic link for email:', email);
                 const { data, error } = await _supabase.auth.signInWithOtp({
                     email: email,
                     options: {
@@ -657,10 +658,18 @@ function startGame() {
                     authModal.style.display = 'none'; // Hide the modal after successful sign-up
                     checkAuth(); // Recheck authentication
                 }*/
-            } else {
+            } 
+            else {
+                console.log('Submitting magic link for email:', email);
                 // Magic link sign-in logic
                 const { error } = await _supabase.auth.signInWithOtp({
-                    email,
+                    email: email,
+                    options: {
+                        //data: { name },
+                        // set this to false if you do not want the user to be automatically signed up
+                        //shouldCreateUser: false,
+                        emailRedirectTo: 'http://127.0.0.1:5500/copilot.html',
+                    },
                 });
 
                 if (error) {
