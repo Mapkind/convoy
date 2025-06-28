@@ -387,7 +387,8 @@ function startGame() {
                 return;
             }
             console.log("user.user_metadata: ", user.user_metadata);
-            const name = user.user_metadata.name; // Get the user's name from metadata
+            const name = "TEST"; // Default name for testing purposes
+            //const name = user.user_metadata.name; // Get the user's name from metadata
             console.log("name: ", name);
             const { error: insertError } = await _supabase
                 .from('leaderboard')
@@ -514,8 +515,69 @@ function startGame() {
                 authModal.style.display = 'block';
             } else {
                 console.log('User is signed in:', user);
-                authModal.style.display = 'none'; // Hide the modal
-                startButton.style.display = 'block'; // Allow the user to start the game
+
+                const userid = user.id;
+
+                const { data, error } = await _supabase
+                .from('userdata')
+                .select('name')
+                //.order('score', { ascending: false })
+                //.limit(10);
+
+                if (error) {
+                    alert('Error fetching user data: ' + error.message);
+                }
+                else{
+                    console.log('User data:', data);
+                    if (data.length > 0) {
+                        const userData = data[0];
+                        // You can display the user's name or any other data as needed
+                        if (userData.name) {
+                            console.log('User name:', userData.name);
+                            authModal.style.display = 'none'; // Hide the modal
+                            startButton.style.display = 'block'; // Allow the user to start the game
+                        } else {
+                            console.log('No name found for this user.');
+                            // Optionally, you can prompt the user to enter their name
+                            authModal.style.display = 'block'; // Show the modal to enter name
+                            authModalTitle.textContent = 'Enter Your Name';
+                            authForm.innerHTML = `
+                                <input type="text" id="name" placeholder="Name" required style="display: block; margin-bottom: 10px; width: 100%; padding: 10px;">
+                                <button type="submit" style="padding: 10px 20px; font-size: 16px;">Submit</button>
+                            `;
+                            authForm.addEventListener('submit', async (e) => {
+                                e.preventDefault();
+                                const name = document.getElementById('name').value;
+                                if (!name) {
+                                    alert('Please enter your name.');
+                                    return;
+                                }
+
+                                const { data, error } = await _supabase
+                                .from('userdata')
+                                .insert({ memid: userid, name: name})
+                                .select()
+                                //.eq('memid', sbuserid)
+
+                                if (error) {
+                                    console.error('Error updating user data:', error.message);
+                                    alert('Error: ' + error.message);
+                                } else {
+                                    console.log('User data updated successfully:', name);
+                                    authModal.style.display = 'none'; // Hide the modal after successful update
+                                    checkAuth(); // Recheck authentication
+                                }
+                            });
+                        }
+                        startButton.style.display = 'block'; // Allow the user to start the game
+                        restartButton.style.display = 'block'; // Allow the user to restart the game
+                        updateLeaderboardUI(); // Update the leaderboard UI     
+                    } else {
+                        console.log('No user data found for this user.');
+                    }
+                }
+                
+
             }
         }
 
@@ -525,8 +587,31 @@ function startGame() {
 
             if (isSignUpMode) {
                 // Sign-up logic
-                const name = document.getElementById('name')?.value || ''; // Optional name field for sign-up
-                const { user, error } = await _supabase.auth.signUp({
+                //const name = document.getElementById('name')?.value || ''; // Optional name field for sign-up
+                
+                const { data, error } = await _supabase.auth.signInWithOtp({
+                    email: email,
+                    options: {
+                        //data: { name },
+                        // set this to false if you do not want the user to be automatically signed up
+                        //shouldCreateUser: false,
+                        emailRedirectTo: 'http://127.0.0.1:5500/copilot.html',
+                    },
+                })
+                if(!error){
+                    console.log('User signed up:', data);
+                    alert('Sign-up successful! Please check your email for the magic link.');
+                    // Hide the modal after successful sign-up
+                    authModal.style.display = 'none'; // Hide the modal after successful sign-up
+                    checkAuth(); // Recheck authentication
+                }
+                else{
+                    console.error('Error signing up:', error.message);
+                    alert('Error: ' + error.message);
+                    return;
+                }
+                
+                /*const { user, error } = await _supabase.auth.signUp({
                     email,
                     options: {
                         data: { name }, // Store the user's name in metadata
@@ -540,7 +625,7 @@ function startGame() {
                     console.log('User signed up:', user);
                     authModal.style.display = 'none'; // Hide the modal after successful sign-up
                     checkAuth(); // Recheck authentication
-                }
+                }*/
             } else {
                 // Magic link sign-in logic
                 const { error } = await _supabase.auth.signInWithOtp({
@@ -564,7 +649,6 @@ function startGame() {
             authForm.innerHTML = isSignUpMode
                 ? `
                     <input type="email" id="email" placeholder="Email" required style="display: block; margin-bottom: 10px; width: 100%; padding: 10px;">
-                    <input type="text" id="name" placeholder="Name" required style="display: block; margin-bottom: 10px; width: 100%; padding: 10px;">
                     <button type="submit" style="padding: 10px 20px; font-size: 16px;">Sign Up</button>
                 `
                 : `
