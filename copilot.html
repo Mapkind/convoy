@@ -386,9 +386,9 @@ function startGame() {
                 console.error('Error fetching user:', error);
                 return;
             }
-
+            console.log("user.user_metadata: ", user.user_metadata);
             const name = user.user_metadata.name; // Get the user's name from metadata
-
+            console.log("name: ", name);
             const { error: insertError } = await _supabase
                 .from('leaderboard')
                 .insert([{ name, score }]);
