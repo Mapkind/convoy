@@ -391,7 +391,7 @@ function startGame() {
             //const name = user.user_metadata.name; // Get the user's name from metadata
             const { error: insertError } = await _supabase
                 .from('leaderboard')
-                .insert({ score: score, name: userName})
+                .insert({ score: score, name: userName, memid: user.id })
                 .select();
 
             if (insertError) {
