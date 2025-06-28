@@ -61,14 +61,15 @@
     <button id="restartButton" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 20px; padding: 10px;">Play Again</button>
 
     <div id="authModal" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
-        <h3>Log In</h3>
+        <h3 id="authModalTitle">Log In</h3>
         <form id="authForm">
             <input type="email" id="email" placeholder="Email" required style="display: block; margin-bottom: 10px; width: 100%; padding: 10px;">
-            <input type="password" id="password" placeholder="Password" required style="display: block; margin-bottom: 10px; width: 100%; padding: 10px;">
-            <button type="submit" style="padding: 10px 20px; font-size: 16px;">Log In</button>
+            <button type="submit" style="padding: 10px 20px; font-size: 16px;">Send Magic Link</button>
         </form>
+        <p style="margin-top: 10px; text-align: center;">
+            <a href="#" id="toggleAuthMode" style="color: blue; text-decoration: underline;">Sign Up Instead</a>
+        </p>
     </div>
-
     <script>
         const { createClient } = supabase
         const _supabase = createClient('https://qplxbyiotkuvsvganuhn.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFwbHhieWlvdGt1dnN2Z2FudWhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTEwNTkwMTUsImV4cCI6MjA2NjYzNTAxNX0.NM4YbUhQmlqw9ugOBEYQLgVSlg2gR3RE-sTQKRXGSvk')
@@ -181,13 +182,8 @@ function startGame() {
                 ctx.textAlign = 'center';
                 ctx.fillText('Game Over', canvas.width / 2, canvas.height / 2);
 
-                // Prompt for name if score qualifies for leaderboard
-                if (leaderboard.length < 10 || score > leaderboard[leaderboard.length - 1].score) {
-                    const name = prompt('Game Over! Enter your name:');
-                    if (name) {
-                        submitScore(name, score); // Submit the score to Supabase
-                    }
-                }
+                // Submit the score automatically if game is over
+                submitScore(score);
 
                 restartButton.style.display = 'block'; // Show the restart button
                 return;
@@ -384,21 +380,29 @@ function startGame() {
             return data;
         }
 
-        async function submitScore(name, score) {
-            const { error } = await _supabase
+        async function submitScore(score) {
+            const { data: { user } } = await _supabase.auth.getUser();
+            if (error || !user) {
+                console.error('Error fetching user:', error);
+                return;
+            }
+
+            const name = user.user_metadata.name; // Get the user's name from metadata
+
+            const { error: insertError } = await _supabase
                 .from('leaderboard')
                 .insert([{ name, score }]);
 
-            if (error) {
-                console.error('Error submitting score:', error);
+            if (insertError) {
+                console.error('Error submitting score:', insertError);
             } else {
-                updateLeaderboardUI();
+                updateLeaderboardUI(); // Refresh leaderboard after submission
             }
         }
 
         async function updateLeaderboardUI() {
             const leaderboard = await fetchLeaderboard();
-            leaderboardList.innerHTML = '';
+            leaderboardList.innerHTML = ''; // Clear existing leaderboard
             leaderboard.forEach(entry => {
                 const li = document.createElement('li');
                 li.textContent = `${entry.name}: ${entry.score}`;
@@ -498,37 +502,83 @@ function startGame() {
         const authModal = document.getElementById('authModal');
         const authForm = document.getElementById('authForm');
         const emailInput = document.getElementById('email');
-        const passwordInput = document.getElementById('password');
+        const toggleAuthMode = document.getElementById('toggleAuthMode');
+        const authModalTitle = document.getElementById('authModalTitle');
+
+        let isSignUpMode = false; // Tracks whether the modal is in sign-up or login mode
 
         async function checkAuth() {
             const { data: { user } } = await _supabase.auth.getUser();
-            //const { data: user, error } = await _supabase.auth.getUser();
             if (!user) {
                 // Show the modal if the user is not signed in
                 authModal.style.display = 'block';
             } else {
                 console.log('User is signed in:', user);
                 authModal.style.display = 'none'; // Hide the modal
+                startButton.style.display = 'block'; // Allow the user to start the game
             }
         }
 
         authForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = emailInput.value;
-            const password = passwordInput.value;
 
-            const { user, error } = await _supabase.auth.signInWithPassword({
-                email,
-                password,
-            });
+            if (isSignUpMode) {
+                // Sign-up logic
+                const name = document.getElementById('name')?.value || ''; // Optional name field for sign-up
+                const { user, error } = await _supabase.auth.signUp({
+                    email,
+                    options: {
+                        data: { name }, // Store the user's name in metadata
+                    },
+                });
 
-            if (error) {
-                console.error('Error logging in:', error.message);
-                alert('Error: ' + error.message);
+                if (error) {
+                    console.error('Error signing up:', error.message);
+                    alert('Error: ' + error.message);
+                } else {
+                    console.log('User signed up:', user);
+                    authModal.style.display = 'none'; // Hide the modal after successful sign-up
+                    checkAuth(); // Recheck authentication
+                }
             } else {
-                console.log('User logged in:', user);
-                authModal.style.display = 'none'; // Hide the modal after successful login
-                checkAuth(); // Recheck authentication
+                // Magic link sign-in logic
+                const { error } = await _supabase.auth.signInWithOtp({
+                    email,
+                });
+
+                if (error) {
+                    console.error('Error sending magic link:', error.message);
+                    alert('Error: ' + error.message);
+                } else {
+                    alert('Magic link sent! Check your email to log in.');
+                }
+            }
+        });
+
+        toggleAuthMode.addEventListener('click', (e) => {
+            e.preventDefault();
+            isSignUpMode = !isSignUpMode;
+            authModalTitle.textContent = isSignUpMode ? 'Sign Up' : 'Log In';
+            authForm.innerHTML = isSignUpMode
+                ? `
+                    <input type="email" id="email" placeholder="Email" required style="display: block; margin-bottom: 10px; width: 100%; padding: 10px;">
+                    <input type="text" id="name" placeholder="Name" required style="display: block; margin-bottom: 10px; width: 100%; padding: 10px;">
+                    <button type="submit" style="padding: 10px 20px; font-size: 16px;">Sign Up</button>
+                `
+                : `
+                    <input type="email" id="email" placeholder="Email" required style="display: block; margin-bottom: 10px; width: 100%; padding: 10px;">
+                    <button type="submit" style="padding: 10px 20px; font-size: 16px;">Send Magic Link</button>
+                `;
+        });
+
+        startButton.addEventListener('click', async () => {
+            const { data: { user } } = await _supabase.auth.getUser();
+            if (!user) {
+                alert('You must be signed in to play the game.');
+                authModal.style.display = 'block';
+            } else {
+                startGame();
             }
         });
 
