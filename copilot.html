@@ -64,10 +64,10 @@
         <h3 id="authModalTitle">Log In</h3>
         <form id="authForm">
             <input type="email" id="email" placeholder="Email" required style="display: block; margin-bottom: 10px; width: 100%; padding: 10px;">
-            <button type="submit" style="padding: 10px 20px; font-size: 16px;">Send Magic Link</button>
+            <button type="submit" style="padding: 10px 20px; font-size: 16px;">Submit</button>
         </form>
         <p style="margin-top: 10px; text-align: center;">
-            <a href="#" id="toggleAuthMode" style="color: blue; text-decoration: underline;">Sign Up Instead</a>
+            <a href="#" id="toggleAuthMode" style="color: blue; text-decoration: underline;">Not a user? Sign up here.</a>
         </p>
     </div>
     <script>
@@ -382,7 +382,7 @@ function startGame() {
 
         async function submitScore(score) {
             const { data: { user } } = await _supabase.auth.getUser();
-            if (error || !user) {
+            if (!user) {
                 console.error('Error fetching user:', error);
                 return;
             }
@@ -559,6 +559,7 @@ function startGame() {
         toggleAuthMode.addEventListener('click', (e) => {
             e.preventDefault();
             isSignUpMode = !isSignUpMode;
+            toggleAuthMode.textContent = isSignUpMode ? 'Already a user? Log in here.' : 'Not a user? Sign up here.';
             authModalTitle.textContent = isSignUpMode ? 'Sign Up' : 'Log In';
             authForm.innerHTML = isSignUpMode
                 ? `
@@ -568,7 +569,7 @@ function startGame() {
                 `
                 : `
                     <input type="email" id="email" placeholder="Email" required style="display: block; margin-bottom: 10px; width: 100%; padding: 10px;">
-                    <button type="submit" style="padding: 10px 20px; font-size: 16px;">Send Magic Link</button>
+                    <button type="submit" style="padding: 10px 20px; font-size: 16px;">Submit</button>
                 `;
         });
 
