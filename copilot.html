@@ -179,21 +179,14 @@ function drawFloatingText() {
 function updateFloatingText() {
     if (!floatingText) return;
 
-    // Smoothly move the text toward the scoreDisplay position
-    const canvasRect = canvas.getBoundingClientRect();
-    const scoreRect = scoreDisplay.getBoundingClientRect();
-    const targetX = scoreRect.left - canvasRect.left + scoreDisplay.offsetWidth / 2;
-    const targetY = scoreRect.top - canvasRect.top - 10;
+    // Move the text straight up
+    floatingText.y -= 2; // Move upward by 1 pixel per frame (adjust speed as needed)
 
-    // Interpolate position
-    floatingText.x += (targetX - floatingText.x) * 0.05; // Smooth movement
-    floatingText.y += (targetY - floatingText.y) * 0.05; // Smooth movement
+    // Fade out the text gradually
+    floatingText.opacity -= 0.01; // Reduce opacity gradually
 
-    // Fade out the text
-    floatingText.opacity -= 0.01;
-
-    // Remove the floating text when it becomes invisible or reaches the target
-    if (floatingText.opacity <= 0 || Math.abs(floatingText.x - targetX) < 1 && Math.abs(floatingText.y - targetY) < 1) {
+    // Remove the floating text when it becomes invisible
+    if (floatingText.opacity <= 0) {
         floatingText = null;
         clearTimeout(floatingTextTimer);
     }
@@ -470,9 +463,12 @@ function updateFloatingText() {
 
                 // Activate the floating text from the snake's head position
                 floatingText = {
-                    x: head.x * gridSize + gridSize / 2,
+                    startX: head.x * gridSize + gridSize / 2, // Starting position (snake's head)
+                    startY: head.y * gridSize + gridSize / 2,
+                    x: head.x * gridSize + gridSize / 2, // Current position
                     y: head.y * gridSize + gridSize / 2,
                     opacity: 1.0, // Fully visible
+                    progress: 0.0, // Start progress at 0
                 };
 
                 // Remove the floating text after 3 seconds
