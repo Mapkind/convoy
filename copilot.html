@@ -27,6 +27,26 @@
         #leaderboardList li {
             margin-bottom: 10px; /* Add 10px space between items */
         }
+        #authModal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        #authModal h3 {
+            margin: 0 0 10px 0;
+        }
+        #authModal input {
+            display: block;
+            margin-bottom: 10px;
+            width: 100%;
+            padding: 10px;
+        }
     </style>
 </head>
 <body>
@@ -39,6 +59,16 @@
     </div>
     <button id="startButton" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 20px; padding: 10px;">Start</button>
     <button id="restartButton" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 20px; padding: 10px;">Play Again</button>
+
+    <div id="authModal" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+        <h3>Log In</h3>
+        <form id="authForm">
+            <input type="email" id="email" placeholder="Email" required style="display: block; margin-bottom: 10px; width: 100%; padding: 10px;">
+            <input type="password" id="password" placeholder="Password" required style="display: block; margin-bottom: 10px; width: 100%; padding: 10px;">
+            <button type="submit" style="padding: 10px 20px; font-size: 16px;">Log In</button>
+        </form>
+    </div>
+
     <script>
         const { createClient } = supabase
         const _supabase = createClient('https://qplxbyiotkuvsvganuhn.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFwbHhieWlvdGt1dnN2Z2FudWhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTEwNTkwMTUsImV4cCI6MjA2NjYzNTAxNX0.NM4YbUhQmlqw9ugOBEYQLgVSlg2gR3RE-sTQKRXGSvk')
@@ -66,7 +96,7 @@ let prevSnake = null;
 let headPopActive = false;
 let headPopTimer = null;
 
-        let leaderboard = []; // Array to store leaderboard entries
+let leaderboard = []; // Array to store leaderboard entries
 
 function resetGame() {
     // Start with a head and a tail segment so the tail is always drawn
@@ -339,8 +369,35 @@ function startGame() {
             ctx.fill();
         }
 
-        function updateLeaderboard() {
-            console.log('Updating leaderboard:', leaderboard);
+        async function fetchLeaderboard() {
+            const { data, error } = await _supabase
+                .from('leaderboard')
+                .select('name, score')
+                .order('score', { ascending: false })
+                .limit(10);
+
+            if (error) {
+                console.error('Error fetching leaderboard:', error);
+                return [];
+            }
+
+            return data;
+        }
+
+        async function submitScore(name, score) {
+            const { error } = await _supabase
+                .from('leaderboard')
+                .insert([{ name, score }]);
+
+            if (error) {
+                console.error('Error submitting score:', error);
+            } else {
+                updateLeaderboardUI();
+            }
+        }
+
+        async function updateLeaderboardUI() {
+            const leaderboard = await fetchLeaderboard();
             leaderboardList.innerHTML = '';
             leaderboard.forEach(entry => {
                 const li = document.createElement('li');
@@ -349,71 +406,59 @@ function startGame() {
             });
         }
 
-async function fetchLeaderboard() {
-    const { data, error } = await _supabase
-        .from('leaderboard')
-        .select('name, score')
-        .order('score', { ascending: false })
-        .limit(10);
-
-    if (error) {
-        console.error('Error fetching leaderboard:', error);
-        return [];
-    }
-
-    return data;
-}
-
-function update() {
-    if (gameOver) return;
-    const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
-    if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount || snake.some(segment => segment.x === head.x && segment.y === head.y)) {
-        gameOver = true;
-        return;
-    }
-    prevSnake = snake.map(seg => ({ ...seg }));
-    snake.unshift(head);
-    if (head.x === food.x && head.y === food.y) {
-        food = generateFood();
-        score++;
-        scoreDisplay.textContent = `Score: ${score}`;
-        if (score % 10 === 0) {
-            interval = Math.max(50, interval - 8);
-            speed++;
-            speedDisplay.textContent = `Speed: ${speed}`;
+        function update() {
+            if (gameOver) return;
+            const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
+            if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount || snake.some(segment => segment.x === head.x && segment.y === head.y)) {
+                gameOver = true;
+                return;
+            }
+            prevSnake = snake.map(seg => ({ ...seg }));
+            snake.unshift(head);
+            if (head.x === food.x && head.y === food.y) {
+                food = generateFood();
+                score++;
+                scoreDisplay.textContent = `Score: ${score}`;
+                if (score % 10 === 0) {
+                    interval = Math.max(50, interval - 8);
+                    speed++;
+                    speedDisplay.textContent = `Speed: ${speed}`;
+                }
+                // Activate the pop effect for 0.5s
+                headPopActive = true;
+                if (headPopTimer) clearTimeout(headPopTimer);
+                headPopTimer = setTimeout(() => {
+                    headPopActive = false;
+                }, 500);
+            } else {
+                snake.pop();
+            }
+            animProgress = 0;
         }
-        // Activate the pop effect for 0.5s
-        headPopActive = true;
-        if (headPopTimer) clearTimeout(headPopTimer);
-        headPopTimer = setTimeout(() => {
-            headPopActive = false;
-        }, 500);
-    } else {
-        snake.pop();
-    }
-    animProgress = 0;
-}
 
 
-function frameLoop(timestamp) {
-    if (lastFrameTime === null) lastFrameTime = timestamp;
-    let dt = timestamp - lastFrameTime;
-    lastFrameTime = timestamp;
-    let moveTime = interval;
-    if (gameOver || countdown > 0) {
-        draw();
-        return;
-    }
-    animProgress += dt / moveTime;
-    if (animProgress >= 1) {
-        animProgress = 1;
-        update();
-    }
-    draw();
-    if (!gameOver) requestAnimationFrame(frameLoop);
-}
+        function frameLoop(timestamp) {
+            if (lastFrameTime === null) lastFrameTime = timestamp;
+            let dt = timestamp - lastFrameTime;
+            lastFrameTime = timestamp;
+            let moveTime = interval;
+            if (gameOver || countdown > 0) {
+                draw();
+                return;
+            }
+            animProgress += dt / moveTime;
+            if (animProgress >= 1) {
+                animProgress = 1;
+                update();
+            }
+            draw();
+            if (!gameOver) requestAnimationFrame(frameLoop);
+        }
 
-        startButton.addEventListener('click', startGame); // Add event listener to start button
+        startButton.addEventListener('click', () => {
+            startGame();
+            updateLeaderboardUI();
+        });
         restartButton.addEventListener('click', startGame); // Add event listener to restart button
 
         window.addEventListener('keydown', e => {
@@ -433,29 +478,6 @@ function frameLoop(timestamp) {
             }
         });
 
-        async function updateLeaderboardUI() {
-            const leaderboard = await fetchLeaderboard();
-            leaderboardList.innerHTML = ''; // Clear existing leaderboard
-            leaderboard.forEach(entry => {
-                const li = document.createElement('li');
-                li.textContent = `${entry.name}: ${entry.score}`;
-                leaderboardList.appendChild(li);
-            });
-        }
-
-        async function submitScore(name, score) {
-            const { error } = await _supabase
-            .from('leaderboard')
-            .insert([{ name, score }]);
-            
-            if (error) {
-                console.error('Error submitting score:', error);
-            }
-            else {
-                updateLeaderboardUI(); // Refresh leaderboard after submission
-            }
-        }
-
         async function subscribeToLeaderboard() {
 
             const changes = _supabase
@@ -470,22 +492,48 @@ function frameLoop(timestamp) {
                 (payload) => updateLeaderboardUI()
             )
             .subscribe()
-
-            /*const { error } = await _supabase
-            .from('leaderboard')
-            .on('INSERT', payload => {
-                updateLeaderboardUI(); // Refresh leaderboard when a new score is added
-            })
-            .subscribe();
-            
-            if (error) {
-                console.error('Error subscribing to leaderboard:', error);
-            } else {
-                console.log('Subscribed to leaderboard updates');
-            }*/
         }
         subscribeToLeaderboard(); // Initial fetch of leaderboard
-        
+
+        const authModal = document.getElementById('authModal');
+        const authForm = document.getElementById('authForm');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+
+        async function checkAuth() {
+            const { data: { user } } = await _supabase.auth.getUser();
+            //const { data: user, error } = await _supabase.auth.getUser();
+            if (!user) {
+                // Show the modal if the user is not signed in
+                authModal.style.display = 'block';
+            } else {
+                console.log('User is signed in:', user);
+                authModal.style.display = 'none'; // Hide the modal
+            }
+        }
+
+        authForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = emailInput.value;
+            const password = passwordInput.value;
+
+            const { user, error } = await _supabase.auth.signInWithPassword({
+                email,
+                password,
+            });
+
+            if (error) {
+                console.error('Error logging in:', error.message);
+                alert('Error: ' + error.message);
+            } else {
+                console.log('User logged in:', user);
+                authModal.style.display = 'none'; // Hide the modal after successful login
+                checkAuth(); // Recheck authentication
+            }
+        });
+
+        // Check authentication on page load
+        checkAuth();
     </script>
 </body>
 </html>
