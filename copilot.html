@@ -169,10 +169,18 @@ function drawFloatingText() {
 
     ctx.save();
     ctx.globalAlpha = opacity; // Set transparency
-    ctx.fillStyle = 'white';
+
+    // Draw white outline
+    ctx.strokeStyle = 'white';
+    ctx.lineWidth = 4;
     ctx.font = '20px "Press Start 2P"';
     ctx.textAlign = 'center';
+    ctx.strokeText('+1', x, y);
+
+    // Draw purple fill
+    ctx.fillStyle = 'purple';
     ctx.fillText('+1', x, y);
+
     ctx.restore();
 }
 
