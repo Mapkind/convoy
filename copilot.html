@@ -85,7 +85,7 @@
         const gridSize = 20;
         const tileCount = canvas.width / gridSize;
 
-
+let userName;
 let snake, direction, food, gameOver, score, speed, interval;
 let countdown = 0;
 let countdownInterval = null;
@@ -386,13 +386,13 @@ function startGame() {
                 console.error('Error fetching user:', error);
                 return;
             }
-            console.log("user.user_metadata: ", user.user_metadata);
-            const name = "TEST"; // Default name for testing purposes
+            //console.log("user.user_metadata: ", user.user_metadata);
+            //const name = "TEST"; // Default name for testing purposes
             //const name = user.user_metadata.name; // Get the user's name from metadata
-            console.log("name: ", name);
             const { error: insertError } = await _supabase
                 .from('leaderboard')
-                .insert([{ name, score }]);
+                .insert({ score: score, name: userName})
+                .select();
 
             if (insertError) {
                 console.error('Error submitting score:', insertError);
@@ -534,6 +534,7 @@ function startGame() {
                         // You can display the user's name or any other data as needed
                         if (userData.name) {
                             console.log('User name:', userData.name);
+                            userName = userData.name; // Store the user's name
                             authModal.style.display = 'none'; // Hide the modal
                             startButton.style.display = 'block'; // Allow the user to start the game
                         } else {
@@ -572,8 +573,38 @@ function startGame() {
                         startButton.style.display = 'block'; // Allow the user to start the game
                         restartButton.style.display = 'block'; // Allow the user to restart the game
                         updateLeaderboardUI(); // Update the leaderboard UI     
-                    } else {
+                    } 
+                    else {
                         console.log('No user data found for this user.');
+                        authModal.style.display = 'block'; // Show the modal to enter name
+                            authModalTitle.textContent = 'Enter Your Name';
+                            authForm.innerHTML = `
+                                <input type="text" id="name" placeholder="Name" required style="display: block; margin-bottom: 10px; width: 100%; padding: 10px;">
+                                <button type="submit" style="padding: 10px 20px; font-size: 16px;">Submit</button>
+                            `;
+                            authForm.addEventListener('submit', async (e) => {
+                                e.preventDefault();
+                                const name = document.getElementById('name').value;
+                                if (!name) {
+                                    alert('Please enter your name.');
+                                    return;
+                                }
+
+                                const { data, error } = await _supabase
+                                .from('userdata')
+                                .insert({ memid: userid, name: name})
+                                .select()
+                                //.eq('memid', sbuserid)
+
+                                if (error) {
+                                    console.error('Error updating user data:', error.message);
+                                    alert('Error: ' + error.message);
+                                } else {
+                                    console.log('User data updated successfully:', name);
+                                    authModal.style.display = 'none'; // Hide the modal after successful update
+                                    checkAuth(); // Recheck authentication
+                                }
+                            });
                     }
                 }
                 
