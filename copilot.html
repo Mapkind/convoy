@@ -159,6 +159,37 @@ function startGame() {
         }
 
 
+        let floatingText = null; // Store the floating text object
+let floatingTextTimer = null; // Timer to remove the floating text
+
+function drawFloatingText() {
+    if (!floatingText) return;
+
+    const { x, y, opacity } = floatingText;
+
+    ctx.save();
+    ctx.globalAlpha = opacity; // Set transparency
+    ctx.fillStyle = 'white';
+    ctx.font = '20px "Press Start 2P"';
+    ctx.textAlign = 'center';
+    ctx.fillText('+1', x, y);
+    ctx.restore();
+}
+
+function updateFloatingText() {
+    if (!floatingText) return;
+
+    // Move the text upward and fade it out
+    floatingText.y -= 2; // Move upward
+    floatingText.opacity -= 0.02; // Reduce opacity
+
+    // Remove the floating text when it becomes invisible
+    if (floatingText.opacity <= 0) {
+        floatingText = null;
+        clearTimeout(floatingTextTimer);
+    }
+}
+
         function draw() {
             // Draw background
             ctx.fillStyle = '#000';
@@ -363,6 +394,9 @@ function startGame() {
             ctx.fillStyle = '#3c3';
             ctx.ellipse(fx + gridSize * 0.13, fy - appleRadius - gridSize * 0.08, gridSize * 0.11, gridSize * 0.05, Math.PI / 6, 0, 2 * Math.PI);
             ctx.fill();
+
+                // Draw floating text
+                drawFloatingText();
         }
 
         async function fetchLeaderboard() {
@@ -386,7 +420,7 @@ function startGame() {
                 console.error('Error fetching user:', error);
                 return;
             }
-            //console.log("user.user_metadata: ", user.user_metadata);
+            //console.log("user.user_metadata: ", user);
             //const name = "TEST"; // Default name for testing purposes
             //const name = user.user_metadata.name; // Get the user's name from metadata
             const { error: insertError } = await _supabase
@@ -424,6 +458,20 @@ function startGame() {
                 food = generateFood();
                 score++;
                 scoreDisplay.textContent = `Score: ${score}`;
+
+                // Activate the floating text from the snake's head position
+                floatingText = {
+                    x: head.x * gridSize + gridSize / 2,
+                    y: head.y * gridSize + gridSize / 2,
+                    opacity: 1.0, // Fully visible
+                };
+
+                // Remove the floating text after 3 seconds
+                if (floatingTextTimer) clearTimeout(floatingTextTimer);
+                floatingTextTimer = setTimeout(() => {
+                    floatingText = null;
+                }, 3000);
+
                 if (score % 10 === 0) {
                     interval = Math.max(50, interval - 8);
                     speed++;
@@ -440,6 +488,7 @@ function startGame() {
                 snake.pop();
             }
             animProgress = 0;
+            updateFloatingText(); // Update floating text position and opacity
         }
 
 
