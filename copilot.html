@@ -172,7 +172,7 @@ function drawFloatingText() {
 
     // Draw white outline
     ctx.strokeStyle = 'white';
-    ctx.lineWidth = 4;
+    ctx.lineWidth = 2;
     ctx.font = '20px "Press Start 2P"';
     ctx.textAlign = 'center';
     ctx.strokeText('+1', x, y);
@@ -187,14 +187,17 @@ function drawFloatingText() {
 function updateFloatingText() {
     if (!floatingText) return;
 
-    // Move the text straight up
-    floatingText.y -= 2; // Move upward by 1 pixel per frame (adjust speed as needed)
+    // Smoothly move the text upward using interpolation
+    floatingText.progress += 0.02; // Increment progress (adjust speed as needed)
 
-    // Fade out the text gradually
-    floatingText.opacity -= 0.01; // Reduce opacity gradually
+    // Interpolate position based on progress
+    floatingText.y = floatingText.startY + (floatingText.targetY - floatingText.startY) * floatingText.progress;
 
-    // Remove the floating text when it becomes invisible
-    if (floatingText.opacity <= 0) {
+    // Fade out the text based on progress
+    floatingText.opacity = 1.0 - floatingText.progress;
+
+    // Remove the floating text when it reaches the target or becomes invisible
+    if (floatingText.progress >= 1.0) {
         floatingText = null;
         clearTimeout(floatingTextTimer);
     }
