@@ -57,8 +57,24 @@
         <h3>Leaderboard</h3>
         <ol id="leaderboardList"></ol>
     </div>
+
     <button id="startButton" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 20px; padding: 10px;">Start!</button>
     <button id="restartButton" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 20px; padding: 10px;">Start!</button>
+
+    <!-- Mobile-friendly arrow controls -->
+    <div id="snakeControls" style="position: absolute; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; z-index: 10;">
+        <div style="display: flex; justify-content: center;">
+            <button id="snakeControlsButtonUp" aria-label="Up" style="width: 60px; height: 60px; margin: 5px; font-size: 2em; border-radius: 50%; border: 2px solid #888; background: #eee;">▲</button>
+        </div>
+        <div style="display: flex; justify-content: center;">
+            <button id="snakeControlsButtonLeft" aria-label="Left" style="width: 60px; height: 60px; margin: 5px; font-size: 2em; border-radius: 50%; border: 2px solid #888; background: #eee;">◀</button>
+            <div style="width: 60px; height: 60px; margin: 5px;"></div>
+            <button id="snakeControlsButtonRight" aria-label="Right" style="width: 60px; height: 60px; margin: 5px; font-size: 2em; border-radius: 50%; border: 2px solid #888; background: #eee;">▶</button>
+        </div>
+        <div style="display: flex; justify-content: center;">
+            <button id="snakeControlsButtonDown" aria-label="Down" style="width: 60px; height: 60px; margin: 5px; font-size: 2em; border-radius: 50%; border: 2px solid #888; background: #eee;">▼</button>
+        </div>
+    </div>
 
     <div id="authModal" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
         <h3 id="authModalTitle">Log In</h3>
@@ -82,6 +98,7 @@
         const startButton = document.getElementById('startButton');
         const restartButton = document.getElementById('restartButton');
         const snakeControlsButtonUp = document.getElementById('snakeControlsButtonUp');
+        const snakeControls = document.getElementById('snakeControls');
         const snakeControlsButtonDown = document.getElementById('snakeControlsButtonDown');
         const snakeControlsButtonLeft = document.getElementById('snakeControlsButtonLeft');
         const snakeControlsButtonRight = document.getElementById('snakeControlsButtonRight');
@@ -142,16 +159,29 @@ function startGame() {
     }, 1000);
 }
 
+
         function positionDisplays() {
             const canvasRect = canvas.getBoundingClientRect();
-            scoreDisplay.style.top = `${canvasRect.top - 25}px`; // 10px above the canvas
-            scoreDisplay.style.left = `${canvasRect.right - scoreDisplay.offsetWidth}px`; // Align to the right of the canvas
 
-            speedDisplay.style.top = `${canvasRect.bottom + 10}px`; // 10px below the canvas
-            speedDisplay.style.left = `${canvasRect.left}px`; // Align to the left of the canvas
+            // Place both score and speed above the canvas
+            const gap = 10;
+            // Score: right above canvas, right-aligned
+            scoreDisplay.style.top = `${canvasRect.top - 25 + window.scrollY}px`;
+            scoreDisplay.style.left = `${canvasRect.right - scoreDisplay.offsetWidth + window.scrollX}px`;
+            // Speed: left above canvas, left-aligned, with a small gap from the top
+            speedDisplay.style.top = `${canvasRect.top - 25 + window.scrollY}px`;
+            speedDisplay.style.left = `${canvasRect.left + window.scrollX}px`;
+
+            // Position the snake controls just below the canvas, centered
+            if (snakeControls) {
+                snakeControls.style.top = `${canvasRect.bottom + 20 + window.scrollY}px`;
+                snakeControls.style.left = `${canvasRect.left + canvasRect.width / 2 + window.scrollX}px`;
+                snakeControls.style.transform = 'translateX(-50%)';
+            }
         }
 
         window.addEventListener('resize', positionDisplays); // Reposition on window resize
+        window.addEventListener('scroll', positionDisplays); // Reposition on scroll (for mobile)
         positionDisplays(); // Initial positioning
 
         function generateFood() {
@@ -562,18 +592,16 @@ function updateFloatingText() {
             }
         });
 
-        snakeControlsButtonUp.addEventListener('click', () => {
-            if (direction.y === 0) direction = { x: 0, y: -1 };
-        });
-        snakeControlsButtonDown.addEventListener('click', () => {
-            if (direction.y === 0) direction = { x: 0, y: 1 };
-        });
-        snakeControlsButtonLeft.addEventListener('click', () => {
-            if (direction.x === 0) direction = { x: -1, y: 0 };
-        });
-        snakeControlsButtonRight.addEventListener('click', () => {
-            if (direction.x === 0) direction = { x: 1, y: 0 };
-        });
+        // Touch/click controls for mobile and desktop
+        snakeControlsButtonUp.addEventListener('touchstart', e => { e.preventDefault(); if (direction.y === 0) direction = { x: 0, y: -1 }; });
+        snakeControlsButtonDown.addEventListener('touchstart', e => { e.preventDefault(); if (direction.y === 0) direction = { x: 0, y: 1 }; });
+        snakeControlsButtonLeft.addEventListener('touchstart', e => { e.preventDefault(); if (direction.x === 0) direction = { x: -1, y: 0 }; });
+        snakeControlsButtonRight.addEventListener('touchstart', e => { e.preventDefault(); if (direction.x === 0) direction = { x: 1, y: 0 }; });
+
+        snakeControlsButtonUp.addEventListener('click', () => { if (direction.y === 0) direction = { x: 0, y: -1 }; });
+        snakeControlsButtonDown.addEventListener('click', () => { if (direction.y === 0) direction = { x: 0, y: 1 }; });
+        snakeControlsButtonLeft.addEventListener('click', () => { if (direction.x === 0) direction = { x: -1, y: 0 }; });
+        snakeControlsButtonRight.addEventListener('click', () => { if (direction.x === 0) direction = { x: 1, y: 0 }; });
 
         async function subscribeToLeaderboard() {
 
