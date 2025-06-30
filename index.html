@@ -574,14 +574,14 @@ function drawTruck(x, y, color, angle = 0) {
 
             prevSnake = snake.map(seg => ({ ...seg }));
             snake.unshift(head); // Add new head
-                console.log("Truck saved! ", food);
+                //console.log("Truck saved! ", food);
                 // Ensure the food truck is added only once
                 if (!snake.some(segment => segment.x === food.x && segment.y === food.y)) {
                     
                     snake.push({ x: food.x, y: food.y, color: food.color });
                     
                 }
-                console.log("Snake array after eating food:", snake);
+                //console.log("Snake array after eating food:", snake);
                 food = generateFood(); // Generate new food
                 score++;
                 scoreDisplay.textContent = `Score: ${score}`;
