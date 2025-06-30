@@ -462,17 +462,11 @@ function drawTruck(x, y, color, angle = 0) {
     const bodyH = gridSize * 0.5;
     const bodyX = (gridSize - bodyW) / 2;
     const bodyY = (gridSize - bodyH) / 2;
-    ctx.beginPath();
-    ctx.rect(bodyX, bodyY, bodyW, bodyH);
-    ctx.fill();
-    ctx.stroke();
-    ctx.restore();
 
-    // --- Draw tires: black squares at each corner, sticking out ---
+    // --- Draw tires: black squares at each corner, sticking out and UNDER the body ---
     ctx.save();
     ctx.fillStyle = '#111';
     const tireSize = gridSize * 0.22;
-    // Offsets so tires stick out
     const offset = tireSize * 0.4;
     // Top left
     ctx.fillRect(bodyX - offset, bodyY - offset, tireSize, tireSize);
@@ -482,6 +476,13 @@ function drawTruck(x, y, color, angle = 0) {
     ctx.fillRect(bodyX - offset, bodyY + bodyH - tireSize + offset, tireSize, tireSize);
     // Bottom right
     ctx.fillRect(bodyX + bodyW - tireSize + offset, bodyY + bodyH - tireSize + offset, tireSize, tireSize);
+    ctx.restore();
+
+    // Draw the truck body rectangle ON TOP of the tires
+    ctx.beginPath();
+    ctx.rect(bodyX, bodyY, bodyW, bodyH);
+    ctx.fill();
+    ctx.stroke();
     ctx.restore();
 
     ctx.restore();
