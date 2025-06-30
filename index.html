@@ -453,82 +453,81 @@ function drawTruck(x, y, color, angle = 0) {
     ctx.translate(-gridSize / 2, -gridSize / 2);
 
 
-    // --- Draw cargo bed (left rectangle with horizontal lines) ---
+    // --- Draw jeep body (main rectangle, colored) ---
     ctx.save();
     ctx.fillStyle = color;
     ctx.strokeStyle = shadeColor(color, -40);
     ctx.lineWidth = 2;
-    // Cargo bed is left third
-    const bedW = gridSize * 0.38;
-    const bedH = gridSize * 0.82;
-    const bedX = 2;
-    const bedY = (gridSize - bedH) / 2;
+    const bodyW = gridSize * 0.7;
+    const bodyH = gridSize * 0.6;
+    const bodyX = (gridSize - bodyW) / 2;
+    const bodyY = (gridSize - bodyH) / 2;
     ctx.beginPath();
-    ctx.rect(bedX, bedY, bedW, bedH);
+    ctx.rect(bodyX, bodyY, bodyW, bodyH);
     ctx.fill();
     ctx.stroke();
-    // Horizontal lines
-    ctx.strokeStyle = shadeColor(color, -60);
+    ctx.restore();
+
+    // --- Draw hood (front, smaller rectangle, dark gray) ---
+    ctx.save();
+    ctx.fillStyle = '#222';
+    const hoodW = bodyW * 0.32;
+    const hoodH = bodyH * 0.7;
+    const hoodX = bodyX + bodyW - hoodW;
+    const hoodY = bodyY + (bodyH - hoodH) / 2;
+    ctx.fillRect(hoodX, hoodY, hoodW, hoodH);
+    ctx.restore();
+
+    // --- Draw windshield (white, slanted) ---
+    ctx.save();
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.moveTo(hoodX, hoodY + 2);
+    ctx.lineTo(hoodX + 4, hoodY + hoodH * 0.15);
+    ctx.lineTo(hoodX + 4, hoodY + hoodH * 0.85);
+    ctx.lineTo(hoodX, hoodY + hoodH - 2);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+
+    // --- Draw grill (vertical lines on hood) ---
+    ctx.save();
+    ctx.strokeStyle = '#fff';
     ctx.lineWidth = 1.1;
-    for (let i = 1; i <= 5; i++) {
-        let y = bedY + (i * bedH) / 6;
+    for (let i = 1; i <= 4; i++) {
+        let gx = hoodX + 4 + (i * (hoodW - 8)) / 5;
         ctx.beginPath();
-        ctx.moveTo(bedX + 4, y);
-        ctx.lineTo(bedX + bedW - 4, y);
+        ctx.moveTo(gx, hoodY + 6);
+        ctx.lineTo(gx, hoodY + hoodH - 6);
         ctx.stroke();
     }
     ctx.restore();
 
-    // --- Draw cab (right, with windshield and angled lines) ---
+    // --- Draw doors (two rectangles, lighter) ---
     ctx.save();
-    // Main cab body
-    ctx.fillStyle = '#222';
-    ctx.strokeStyle = '#222';
-    ctx.lineWidth = 1.5;
-    const cabW = gridSize * 0.38;
-    const cabH = gridSize * 0.82;
-    const cabX = gridSize - cabW - 2;
-    const cabY = (gridSize - cabH) / 2;
-    ctx.beginPath();
-    ctx.rect(cabX, cabY, cabW, cabH);
-    ctx.fill();
-    ctx.stroke();
-    // Windshield (white polygon, angled)
-    ctx.save();
-    ctx.fillStyle = '#fff';
-    ctx.beginPath();
-    ctx.moveTo(cabX + cabW - 2, cabY + cabH * 0.18);
-    ctx.lineTo(cabX + cabW, cabY + cabH * 0.5);
-    ctx.lineTo(cabX + cabW - 2, cabY + cabH * 0.82);
-    ctx.lineTo(cabX + cabW - 10, cabY + cabH * 0.68);
-    ctx.lineTo(cabX + cabW - 10, cabY + cabH * 0.32);
-    ctx.closePath();
-    ctx.fill();
-    ctx.restore();
-    // Angled hood lines
-    ctx.save();
-    ctx.strokeStyle = '#fff';
-    ctx.lineWidth = 1.1;
-    ctx.beginPath();
-    ctx.moveTo(cabX + cabW - 6, cabY + cabH * 0.22);
-    ctx.lineTo(cabX + cabW - 2, cabY + cabH * 0.18);
-    ctx.moveTo(cabX + cabW - 6, cabY + cabH * 0.78);
-    ctx.lineTo(cabX + cabW - 2, cabY + cabH * 0.82);
-    ctx.stroke();
-    ctx.restore();
+    ctx.fillStyle = shadeColor(color, 30);
+    const doorW = bodyW * 0.22;
+    const doorH = bodyH * 0.7;
+    const doorY = bodyY + (bodyH - doorH) / 2;
+    // Left door
+    ctx.fillRect(bodyX + 4, doorY, doorW, doorH);
+    // Right door
+    ctx.fillRect(bodyX + bodyW - doorW - 4, doorY, doorW, doorH);
     ctx.restore();
 
-    // --- Draw wheels (black, circles, outside corners of bed and cab) ---
+    // --- Draw wheels (black, circles at corners) ---
     ctx.save();
     ctx.fillStyle = '#111';
-    const wheelR = gridSize * 0.18;
-    // Bed wheels
+    const wheelR = gridSize * 0.16;
+    // Front left
     ctx.beginPath();
-    ctx.arc(bedX + 2, bedY + 2, wheelR, 0, 2 * Math.PI);
-    ctx.arc(bedX + 2, bedY + bedH - 2, wheelR, 0, 2 * Math.PI);
-    // Cab wheels
-    ctx.arc(cabX + cabW - 2, cabY + 2, wheelR, 0, 2 * Math.PI);
-    ctx.arc(cabX + cabW - 2, cabY + cabH - 2, wheelR, 0, 2 * Math.PI);
+    ctx.arc(bodyX + 4, bodyY + 4, wheelR, 0, 2 * Math.PI);
+    // Front right
+    ctx.arc(bodyX + bodyW - 4, bodyY + 4, wheelR, 0, 2 * Math.PI);
+    // Rear left
+    ctx.arc(bodyX + 4, bodyY + bodyH - 4, wheelR, 0, 2 * Math.PI);
+    // Rear right
+    ctx.arc(bodyX + bodyW - 4, bodyY + bodyH - 4, wheelR, 0, 2 * Math.PI);
     ctx.fill();
     ctx.restore();
 
