@@ -503,6 +503,8 @@ function getTruckDrawParams(dir, prevDir = null) {
             }
 
 
+
+            // --- Draw food truck and debug rectangles BEFORE snake ---
             // Debug: Log food truck position and color (once per frame)
             console.log('Food truck at', food.x, food.y, 'color:', food.color);
 
@@ -513,6 +515,9 @@ function getTruckDrawParams(dir, prevDir = null) {
             // Draw a large blue rectangle at the food truck's position
             ctx.fillStyle = 'blue';
             ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize, gridSize);
+
+            // Draw the food truck as normal (SVG)
+            drawTruck(food.x, food.y, food.color, 0, false);
 
             if (gameOver) {
                 document.getElementById('leaderboard').style.opacity = 1; // Hide leaderboard on game over
