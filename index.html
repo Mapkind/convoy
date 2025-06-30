@@ -437,11 +437,6 @@ function updateFloatingText() {
 
 // Draw a truck using a pixel-art style inspired by truck.png
 function drawTruck(x, y, color, angle = 0, mirror = false) {
-    if (!truckImage) {
-        console.error('Truck image not loaded yet.');
-        return;
-    }
-
     const px = x * gridSize;
     const py = y * gridSize;
 
@@ -453,15 +448,23 @@ function drawTruck(x, y, color, angle = 0, mirror = false) {
     ctx.rotate(angle);
     ctx.translate(-gridSize / 2, -gridSize / 2);
 
-    // Draw the preloaded truck image on the canvas
-    ctx.drawImage(truckImage, 0, 0, gridSize, gridSize);
-
-    // Apply the truck's assigned color as a tint
-    ctx.globalCompositeOperation = 'source-in'; // Only color the non-transparent (filled) parts
-    ctx.fillStyle = color;
-    ctx.fillRect(0, 0, gridSize, gridSize);
-
-    ctx.globalCompositeOperation = 'source-over'; // Reset composite operation
+    if (truckImage && truckImage.complete && truckImage.naturalWidth > 0) {
+        // Draw the preloaded truck image on the canvas
+        ctx.drawImage(truckImage, 0, 0, gridSize, gridSize);
+        // Apply the truck's assigned color as a tint
+        ctx.globalCompositeOperation = 'source-in'; // Only color the non-transparent (filled) parts
+        ctx.fillStyle = color;
+        ctx.fillRect(0, 0, gridSize, gridSize);
+        ctx.globalCompositeOperation = 'source-over'; // Reset composite operation
+    } else {
+        // Fallback: draw a colored rectangle and log a warning
+        ctx.fillStyle = color;
+        ctx.fillRect(0, 0, gridSize, gridSize);
+        ctx.strokeStyle = '#f00';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(0, 0, gridSize, gridSize);
+        console.warn('Truck image not loaded or invalid. Drawing fallback rectangle.');
+    }
     ctx.restore();
 }
 
