@@ -508,11 +508,9 @@ function getTruckDrawParams(dir, prevDir = null) {
                 return;
             }
 
-            // Draw the food truck (always, not just at game over)
-            drawTruck(food.x, food.y, food.color, 0, false);
 
             // Draw all trucks in the snake (head + collected trucks)
-            for (let i = 0; i < snake.length; i++) {
+            for (let i = snake.length - 1; i >= 0; i--) {
                 let seg = snake[i];
                 let prevSeg = prevSnake && prevSnake[i] ? prevSnake[i] : seg;
                 // Interpolate position for smooth movement
@@ -540,6 +538,9 @@ function getTruckDrawParams(dir, prevDir = null) {
                     drawTruck(x, y, seg.color, angle, mirror);
                 }
             }
+
+            // Draw the food truck (always, not just at game over) ON TOP of the snake
+            drawTruck(food.x, food.y, food.color, 0, false);
 
             // Draw floating text
             drawFloatingText();
