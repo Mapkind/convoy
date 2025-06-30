@@ -475,6 +475,7 @@ function drawTruck(x, y, color, angle = 0) {
             }
 
             if (gameOver) {
+                document.getElementById('leaderboard').style.opacity = 1; // Hide leaderboard on game over
                 ctx.fillStyle = 'red';
                 ctx.font = '20px "Press Start 2P"';
                 ctx.textAlign = 'center';
