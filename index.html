@@ -218,6 +218,7 @@ function startGame() {
                 const leaderboardWidth = Math.max(220, Math.floor(canvas.width * 0.7));
                 leaderboard.style.position = 'absolute';
                 leaderboard.style.width = leaderboardWidth + 'px';
+                leaderboard.style.height = '400px';
                 leaderboard.style.left = (canvasRect.left + (canvas.width - leaderboardWidth) / 2 + window.scrollX) + 'px';
 
                 // Vertically center: use flexbox on the leaderboard for content, but absolutely center the leaderboard itself
