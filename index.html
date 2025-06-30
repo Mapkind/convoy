@@ -213,27 +213,40 @@ function startGame() {
                 authModal.style.zIndex = '1000';
             }
 
-            // Position start and restart buttons 20px above the bottom of the game canvas, centered horizontally
+            // Position start and restart buttons 20px above the bottom of the game canvas, centered horizontally, and ensure they are within the canvas
             const startButton = document.getElementById('startButton');
             const restartButton = document.getElementById('restartButton');
             if (gameCanvas) {
                 const rect = gameCanvas.getBoundingClientRect();
-                const buttonY = rect.top + rect.height + window.scrollY - 20; // 20px above bottom edge
-                // Center start button
+                // Calculate button width and height (fallback to 120x40 if not rendered yet)
+                const buttonWidth = (startButton && startButton.offsetWidth) ? startButton.offsetWidth : 120;
+                const buttonHeight = (startButton && startButton.offsetHeight) ? startButton.offsetHeight : 40;
+                // Y position: 20px above the bottom, but not below the canvas
+                const buttonY = rect.top + rect.height - 20 - buttonHeight + window.scrollY;
+                // X position: center within the canvas
+                const buttonX = rect.left + rect.width / 2 + window.scrollX;
+                // Place start button
                 if (startButton) {
                     startButton.style.position = 'absolute';
-                    startButton.style.left = (rect.left + rect.width / 2 + window.scrollX) + 'px';
+                    startButton.style.left = buttonX + 'px';
                     startButton.style.top = buttonY + 'px';
                     startButton.style.transform = 'translate(-50%, 0)';
                     startButton.style.zIndex = '1001';
+                    // Ensure button is a child of the canvas's parent (so it overlays the canvas)
+                    if (gameCanvas.parentNode && startButton.parentNode !== gameCanvas.parentNode) {
+                        gameCanvas.parentNode.appendChild(startButton);
+                    }
                 }
-                // Center restart button
+                // Place restart button
                 if (restartButton) {
                     restartButton.style.position = 'absolute';
-                    restartButton.style.left = (rect.left + rect.width / 2 + window.scrollX) + 'px';
+                    restartButton.style.left = buttonX + 'px';
                     restartButton.style.top = buttonY + 'px';
                     restartButton.style.transform = 'translate(-50%, 0)';
                     restartButton.style.zIndex = '1001';
+                    if (gameCanvas.parentNode && restartButton.parentNode !== gameCanvas.parentNode) {
+                        gameCanvas.parentNode.appendChild(restartButton);
+                    }
                 }
             }
             const canvasRect = canvas.getBoundingClientRect();
