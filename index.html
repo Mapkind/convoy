@@ -219,8 +219,18 @@ function startGame() {
                 leaderboard.style.position = 'absolute';
                 leaderboard.style.width = leaderboardWidth + 'px';
                 leaderboard.style.left = (canvasRect.left + (canvas.width - leaderboardWidth) / 2 + window.scrollX) + 'px';
-                // Vertically center: canvasRect.top + (canvas.height - leaderboard.offsetHeight) / 2
-                leaderboard.style.top = (canvasRect.top + (canvas.height - leaderboard.offsetHeight) / 2 + window.scrollY) + 'px';
+
+                // Vertically center: use flexbox on the leaderboard for content, but absolutely center the leaderboard itself
+                // Use canvasRect.top + (canvasRect.height - leaderboard.offsetHeight) / 2
+                // To ensure correct centering, force a reflow to get updated offsetHeight
+                leaderboard.style.visibility = 'hidden';
+                leaderboard.style.display = 'block';
+                // Force reflow
+                void leaderboard.offsetHeight;
+                const verticalCenter = canvasRect.top + (canvasRect.height - leaderboard.offsetHeight) / 2 + window.scrollY;
+                leaderboard.style.top = `${verticalCenter}px`;
+                leaderboard.style.visibility = 'visible';
+
                 leaderboard.style.opacity = '0.5';
                 leaderboard.style.pointerEvents = 'none';
                 leaderboard.style.textAlign = 'center';
