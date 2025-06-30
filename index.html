@@ -616,46 +616,43 @@ function getTruckDrawParams(dir, prevDir = null) {
         function update() {
             if (gameOver) return;
 
-            let head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y, color: snake[0].color };
+            // Move the snake's head forward first
+            let newHead = { x: snake[0].x + direction.x, y: snake[0].y + direction.y, color: snake[0].color };
 
-            if (head.x === food.x && head.y === food.y) {
-
-                head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y, color: food.color };
-                
-                if (
-                    head.x < 0 || 
-                    head.x >= tileCount || 
-                    head.y < 0 || 
-                    head.y >= tileCount || 
-                    snake.some(segment => segment.x === head.x && segment.y === head.y)
-                ) {
-                    gameOver = true;
-                    return;
-                }
+            // Check for collision (wall or self)
+            if (
+                newHead.x < 0 ||
+                newHead.x >= tileCount ||
+                newHead.y < 0 ||
+                newHead.y >= tileCount ||
+                snake.some(segment => segment.x === newHead.x && segment.y === newHead.y)
+            ) {
+                gameOver = true;
+                return;
+            }
 
             prevSnake = snake.map(seg => ({ ...seg }));
-            snake.unshift(head); // Add new head
-                //console.log("Truck saved! ", food);
-                // Ensure the food truck is added only once
-                if (!snake.some(segment => segment.x === food.x && segment.y === food.y)) {
-                    
-                    snake.push({ x: food.x, y: food.y, color: food.color });
-                    
-                }
-                //console.log("Snake array after eating food:", snake);
-                food = generateFood(); // Generate new food
+            snake.unshift(newHead); // Add new head
+
+            // Check if food is eaten
+            if (newHead.x === food.x && newHead.y === food.y) {
+                // Change head color to food color
+                snake[0].color = food.color;
+
+                // Generate new food
+                food = generateFood();
                 score++;
                 scoreDisplay.textContent = `Score: ${score}`;
 
                 // Activate the floating text from the snake's head position
                 floatingText = {
-                    startX: head.x * gridSize + gridSize / 2, // Starting position (snake's head)
-                    startY: head.y * gridSize + gridSize / 2,
-                    targetY: head.y * gridSize - gridSize * 2, // Move upward by 2 grid units
-                    x: head.x * gridSize + gridSize / 2, // X position remains constant
-                    y: head.y * gridSize + gridSize / 2, // Current position
-                    opacity: 1.0, // Fully visible
-                    progress: 0.0, // Start progress at 0
+                    startX: newHead.x * gridSize + gridSize / 2,
+                    startY: newHead.y * gridSize + gridSize / 2,
+                    targetY: newHead.y * gridSize - gridSize * 2,
+                    x: newHead.x * gridSize + gridSize / 2,
+                    y: newHead.y * gridSize + gridSize / 2,
+                    opacity: 1.0,
+                    progress: 0.0,
                 };
 
                 // Remove the floating text after 3 seconds (fallback)
@@ -669,24 +666,10 @@ function getTruckDrawParams(dir, prevDir = null) {
                     speed++;
                     speedDisplay.textContent = `Speed: ${speed}`;
                 }
-            } 
-            else {
-                head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y, color: snake[0].color };
-                if (
-                    head.x < 0 || 
-                    head.x >= tileCount || 
-                    head.y < 0 || 
-                    head.y >= tileCount || 
-                    snake.some(segment => segment.x === head.x && segment.y === head.y)
-                ) {
-                    gameOver = true;
-                    return;
-                }
-
-            prevSnake = snake.map(seg => ({ ...seg }));
-            snake.unshift(head); // Add new head
-                //snake.unshift(head); // Add new head
-                snake.pop(); // Remove the tail if no food is eaten
+                // Do not remove tail (snake grows)
+            } else {
+                // Remove the tail if no food is eaten
+                snake.pop();
             }
 
             animProgress = 0;
