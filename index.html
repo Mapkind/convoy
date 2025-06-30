@@ -453,13 +453,13 @@ function drawTruck(x, y, color, angle = 0) {
     ctx.translate(-gridSize / 2, -gridSize / 2);
 
 
-    // --- Draw jeep body (main rectangle, colored) ---
+    // --- Draw main rectangle body ---
     ctx.save();
     ctx.fillStyle = color;
     ctx.strokeStyle = shadeColor(color, -40);
     ctx.lineWidth = 2;
     const bodyW = gridSize * 0.7;
-    const bodyH = gridSize * 0.6;
+    const bodyH = gridSize * 0.5;
     const bodyX = (gridSize - bodyW) / 2;
     const bodyY = (gridSize - bodyH) / 2;
     ctx.beginPath();
@@ -468,67 +468,20 @@ function drawTruck(x, y, color, angle = 0) {
     ctx.stroke();
     ctx.restore();
 
-    // --- Draw hood (front, smaller rectangle, dark gray) ---
-    ctx.save();
-    ctx.fillStyle = '#222';
-    const hoodW = bodyW * 0.32;
-    const hoodH = bodyH * 0.7;
-    const hoodX = bodyX + bodyW - hoodW;
-    const hoodY = bodyY + (bodyH - hoodH) / 2;
-    ctx.fillRect(hoodX, hoodY, hoodW, hoodH);
-    ctx.restore();
-
-    // --- Draw windshield (white, slanted) ---
-    ctx.save();
-    ctx.fillStyle = '#fff';
-    ctx.beginPath();
-    ctx.moveTo(hoodX, hoodY + 2);
-    ctx.lineTo(hoodX + 4, hoodY + hoodH * 0.15);
-    ctx.lineTo(hoodX + 4, hoodY + hoodH * 0.85);
-    ctx.lineTo(hoodX, hoodY + hoodH - 2);
-    ctx.closePath();
-    ctx.fill();
-    ctx.restore();
-
-    // --- Draw grill (vertical lines on hood) ---
-    ctx.save();
-    ctx.strokeStyle = '#fff';
-    ctx.lineWidth = 1.1;
-    for (let i = 1; i <= 4; i++) {
-        let gx = hoodX + 4 + (i * (hoodW - 8)) / 5;
-        ctx.beginPath();
-        ctx.moveTo(gx, hoodY + 6);
-        ctx.lineTo(gx, hoodY + hoodH - 6);
-        ctx.stroke();
-    }
-    ctx.restore();
-
-    // --- Draw doors (two rectangles, lighter) ---
-    ctx.save();
-    ctx.fillStyle = shadeColor(color, 30);
-    const doorW = bodyW * 0.22;
-    const doorH = bodyH * 0.7;
-    const doorY = bodyY + (bodyH - doorH) / 2;
-    // Left door
-    ctx.fillRect(bodyX + 4, doorY, doorW, doorH);
-    // Right door
-    ctx.fillRect(bodyX + bodyW - doorW - 4, doorY, doorW, doorH);
-    ctx.restore();
-
-    // --- Draw wheels (black, circles at corners) ---
+    // --- Draw tires: black squares at each corner, sticking out ---
     ctx.save();
     ctx.fillStyle = '#111';
-    const wheelR = gridSize * 0.16;
-    // Front left
-    ctx.beginPath();
-    ctx.arc(bodyX + 4, bodyY + 4, wheelR, 0, 2 * Math.PI);
-    // Front right
-    ctx.arc(bodyX + bodyW - 4, bodyY + 4, wheelR, 0, 2 * Math.PI);
-    // Rear left
-    ctx.arc(bodyX + 4, bodyY + bodyH - 4, wheelR, 0, 2 * Math.PI);
-    // Rear right
-    ctx.arc(bodyX + bodyW - 4, bodyY + bodyH - 4, wheelR, 0, 2 * Math.PI);
-    ctx.fill();
+    const tireSize = gridSize * 0.22;
+    // Offsets so tires stick out
+    const offset = tireSize * 0.4;
+    // Top left
+    ctx.fillRect(bodyX - offset, bodyY - offset, tireSize, tireSize);
+    // Top right
+    ctx.fillRect(bodyX + bodyW - tireSize + offset, bodyY - offset, tireSize, tireSize);
+    // Bottom left
+    ctx.fillRect(bodyX - offset, bodyY + bodyH - tireSize + offset, tireSize, tireSize);
+    // Bottom right
+    ctx.fillRect(bodyX + bodyW - tireSize + offset, bodyY + bodyH - tireSize + offset, tireSize, tireSize);
     ctx.restore();
 
     ctx.restore();
