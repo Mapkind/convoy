@@ -502,6 +502,18 @@ function getTruckDrawParams(dir, prevDir = null) {
                 return;
             }
 
+
+            // Debug: Log food truck position and color (once per frame)
+            console.log('Food truck at', food.x, food.y, 'color:', food.color);
+
+            // Draw a large red rectangle at (0,0) covering top-left quarter
+            ctx.fillStyle = 'red';
+            ctx.fillRect(0, 0, canvas.width / 2, canvas.height / 2);
+
+            // Draw a large blue rectangle at the food truck's position
+            ctx.fillStyle = 'blue';
+            ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize, gridSize);
+
             if (gameOver) {
                 document.getElementById('leaderboard').style.opacity = 1; // Hide leaderboard on game over
                 ctx.fillStyle = 'red';
@@ -515,21 +527,6 @@ function getTruckDrawParams(dir, prevDir = null) {
                 restartButton.style.display = 'block'; // Show the restart button
                 return;
             }
-
-
-
-
-
-            // Debug: Log food truck position and color (once per frame)
-            console.log('Food truck at', food.x, food.y, 'color:', food.color);
-
-            // Draw a large red rectangle at (0,0) covering top-left quarter
-            ctx.fillStyle = 'red';
-            ctx.fillRect(0, 0, canvas.width / 2, canvas.height / 2);
-
-            // Draw a large blue rectangle at the food truck's position
-            ctx.fillStyle = 'blue';
-            ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize, gridSize);
 
             // Draw all trucks in the snake (head + collected trucks)
             for (let i = 0; i < snake.length; i++) {
