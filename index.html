@@ -441,7 +441,7 @@ function updateFloatingText() {
     }
 }
 
-// Draw a truck as a simple colored rectangle with a white cab (front) and black wheels
+// Draw a truck as a top view: colored rectangle, white cab at the front, and four wheels at the corners
 function drawTruck(x, y, color, angle = 0) {
     const px = x * gridSize;
     const py = y * gridSize;
@@ -451,19 +451,21 @@ function drawTruck(x, y, color, angle = 0) {
     ctx.rotate(angle);
     ctx.translate(-gridSize / 2, -gridSize / 2);
 
-    // Draw truck body
+    // Draw truck body (main rectangle)
     ctx.fillStyle = color;
-    ctx.fillRect(0, 4, gridSize, gridSize - 8);
+    ctx.fillRect(4, 4, gridSize - 8, gridSize - 8);
 
-    // Draw cab (front, right side)
+    // Draw cab (front, top center)
     ctx.fillStyle = '#fff';
-    ctx.fillRect(gridSize - 7, 7, 7, gridSize - 14);
+    ctx.fillRect((gridSize / 2) - 6, 2, 12, 8);
 
-    // Draw wheels (black circles)
+    // Draw wheels (black circles at four corners)
     ctx.fillStyle = '#222';
     ctx.beginPath();
-    ctx.arc(6, gridSize - 4, 3, 0, 2 * Math.PI);
-    ctx.arc(gridSize - 6, gridSize - 4, 3, 0, 2 * Math.PI);
+    ctx.arc(6, 6, 3, 0, 2 * Math.PI); // top-left
+    ctx.arc(gridSize - 6, 6, 3, 0, 2 * Math.PI); // top-right
+    ctx.arc(6, gridSize - 6, 3, 0, 2 * Math.PI); // bottom-left
+    ctx.arc(gridSize - 6, gridSize - 6, 3, 0, 2 * Math.PI); // bottom-right
     ctx.fill();
 
     ctx.restore();
