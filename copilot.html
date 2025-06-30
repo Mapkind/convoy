@@ -378,28 +378,33 @@ function drawTruck(x, y, color, angle = 0) {
         function update() {
             if (gameOver) return;
 
-            const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y, color: snake[0].color };
-            if (
-                head.x < 0 || 
-                head.x >= tileCount || 
-                head.y < 0 || 
-                head.y >= tileCount || 
-                snake.some(segment => segment.x === head.x && segment.y === head.y)
-            ) {
-                gameOver = true;
-                return;
-            }
+            let head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y, color: snake[0].color };
+
+            if (head.x === food.x && head.y === food.y) {
+
+                head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y, color: food.color };
+                
+                if (
+                    head.x < 0 || 
+                    head.x >= tileCount || 
+                    head.y < 0 || 
+                    head.y >= tileCount || 
+                    snake.some(segment => segment.x === head.x && segment.y === head.y)
+                ) {
+                    gameOver = true;
+                    return;
+                }
 
             prevSnake = snake.map(seg => ({ ...seg }));
             snake.unshift(head); // Add new head
-
-            if (head.x === food.x && head.y === food.y) {
+                console.log("Truck saved! ", food);
                 // Ensure the food truck is added only once
                 if (!snake.some(segment => segment.x === food.x && segment.y === food.y)) {
-                    console.log("Truck saved! ", food);
+                    
                     snake.push({ x: food.x, y: food.y, color: food.color });
-                    console.log("Snake array after eating food:", snake);
+                    
                 }
+                console.log("Snake array after eating food:", snake);
                 food = generateFood(); // Generate new food
                 score++;
                 scoreDisplay.textContent = `Score: ${score}`;
@@ -426,7 +431,23 @@ function drawTruck(x, y, color, angle = 0) {
                     speed++;
                     speedDisplay.textContent = `Speed: ${speed}`;
                 }
-            } else {
+            } 
+            else {
+                head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y, color: snake[0].color };
+                if (
+                    head.x < 0 || 
+                    head.x >= tileCount || 
+                    head.y < 0 || 
+                    head.y >= tileCount || 
+                    snake.some(segment => segment.x === head.x && segment.y === head.y)
+                ) {
+                    gameOver = true;
+                    return;
+                }
+
+            prevSnake = snake.map(seg => ({ ...seg }));
+            snake.unshift(head); // Add new head
+                //snake.unshift(head); // Add new head
                 snake.pop(); // Remove the tail if no food is eaten
             }
 
