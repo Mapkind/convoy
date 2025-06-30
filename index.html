@@ -458,6 +458,16 @@ function drawTruck(x, y, color, angle = 0) {
     ctx.restore();
 }
 
+// Helper to get angle for truck head based on direction
+function getTruckAngle(dir) {
+    // Truck SVG points right by default
+    if (dir.x === 1 && dir.y === 0) return 0; // right
+    if (dir.x === -1 && dir.y === 0) return Math.PI; // left
+    if (dir.x === 0 && dir.y === -1) return -Math.PI / 2; // up
+    if (dir.x === 0 && dir.y === 1) return Math.PI / 2; // down
+    return 0;
+}
+
         function draw() {
             // Draw background
             ctx.fillStyle = '#000';
@@ -489,6 +499,7 @@ function drawTruck(x, y, color, angle = 0) {
                 return;
             }
 
+
             // Draw all trucks in the snake (head + collected trucks)
             for (let i = 0; i < snake.length; i++) {
                 let seg = snake[i];
@@ -496,11 +507,24 @@ function drawTruck(x, y, color, angle = 0) {
                 // Interpolate position for smooth movement
                 let x = (prevSeg.x + (seg.x - prevSeg.x) * animProgress);
                 let y = (prevSeg.y + (seg.y - prevSeg.y) * animProgress);
-                drawTruck(x, y, seg.color);
+                // For the head, use the current direction for angle
+                if (i === 0) {
+                    drawTruck(x, y, seg.color, getTruckAngle(direction));
+                } else {
+                    // For body, try to infer direction from previous/next segment
+                    let angle = 0;
+                    if (i > 0) {
+                        let prev = snake[i - 1];
+                        let dx = seg.x - prev.x;
+                        let dy = seg.y - prev.y;
+                        angle = getTruckAngle({ x: dx, y: dy });
+                    }
+                    drawTruck(x, y, seg.color, angle);
+                }
             }
 
-            // Draw the food as a random colored truck
-            drawTruck(food.x, food.y, food.color);
+            // Draw the food as a random colored truck (always facing right)
+            drawTruck(food.x, food.y, food.color, 0);
 
             // Draw floating text
             drawFloatingText();
