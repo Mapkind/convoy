@@ -457,7 +457,7 @@ function drawTruck(x, y, color, angle = 0, mirror = false) {
     ctx.drawImage(truckImage, 0, 0, gridSize, gridSize);
 
     // Apply the truck's assigned color as a tint
-    ctx.globalCompositeOperation = 'multiply'; // Use 'multiply' to blend the color with the image
+    ctx.globalCompositeOperation = 'source-in'; // Only color the non-transparent (filled) parts
     ctx.fillStyle = color;
     ctx.fillRect(0, 0, gridSize, gridSize);
 
