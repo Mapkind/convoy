@@ -195,6 +195,7 @@ function startGame() {
             const authModal = document.getElementById('authModal');
             const gameCanvas = document.getElementById('gameCanvas');
             if (isMobileDevice && authModal && gameCanvas) {
+                console.log('Positioning auth modal for mobile');
                 // Get canvas position and size
                 const rect = gameCanvas.getBoundingClientRect();
                 // Center modal over canvas
@@ -216,6 +217,7 @@ function startGame() {
             const startButton = document.getElementById('startButton');
             const restartButton = document.getElementById('restartButton');
             if (isMobileDevice && gameCanvas) {
+                console.log('Positioning start/restart buttons for mobile');
                 const rect = gameCanvas.getBoundingClientRect();
                 // Center start button
                 if (startButton) {
@@ -253,6 +255,7 @@ function startGame() {
             const canvasRect = canvas.getBoundingClientRect();
 
             if (isMobileDevice) {
+                console.log('Positioning displays for mobile');
                 // Move all elements to the top of the page for mobile
                 // Score: top right
                 scoreDisplay.style.position = 'absolute';
@@ -362,7 +365,20 @@ function startGame() {
 
         window.addEventListener('resize', positionDisplays); // Reposition on window resize
         window.addEventListener('scroll', positionDisplays); // Reposition on scroll (for mobile)
-        positionDisplays(); // Initial positioning
+
+        // Ensure all elements are rendered and styled before initial positioning
+        window.addEventListener('DOMContentLoaded', () => {
+            // Use a longer timeout and multiple calls to ensure layout is correct on mobile
+            setTimeout(positionDisplays, 100);
+            setTimeout(positionDisplays, 300);
+            setTimeout(positionDisplays, 600);
+            // Also call after all resources (images/fonts) are loaded
+            window.addEventListener('load', () => {
+                setTimeout(positionDisplays, 100);
+                setTimeout(positionDisplays, 300);
+                setTimeout(positionDisplays, 600);
+            });
+        });
 
 function generateFood() {
     let newFood;
