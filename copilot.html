@@ -256,13 +256,12 @@ function updateFloatingText() {
 }
 
 // Draw a truck using a pixel-art style inspired by truck.png
-function drawTruck(x, y, color, angle = 0, isHead = false) {
+function drawTruck(x, y, color, angle = 0) {
     if (!truckImage) {
         console.error('Truck image not loaded yet.');
         return;
     }
 
-    //console.log(`Drawing truck at (${x}, ${y}) with color ${color}`);
     const px = x * gridSize;
     const py = y * gridSize;
 
@@ -272,14 +271,8 @@ function drawTruck(x, y, color, angle = 0, isHead = false) {
     ctx.translate(-gridSize / 2, -gridSize / 2);
 
     // Draw the preloaded truck image on the canvas
-    ctx.drawImage(truckImage, 0, 0, gridSize, gridSize);
-
-    // Add a border for the head truck
-    if (isHead) {
-        ctx.strokeStyle = '#ffd600';
-        ctx.lineWidth = 2.5;
-        ctx.strokeRect(0, 0, gridSize, gridSize);
-    }
+    ctx.fillStyle = color; // Use the truck's assigned color
+    ctx.fillRect(0, 0, gridSize, gridSize);
 
     ctx.restore();
 }
@@ -315,23 +308,13 @@ function drawTruck(x, y, color, angle = 0, isHead = false) {
             }
 
             // Draw all trucks in the snake (head + collected trucks)
-
             for (let i = 0; i < snake.length; i++) {
                 let seg = snake[i];
                 let prevSeg = prevSnake && prevSnake[i] ? prevSnake[i] : seg;
                 // Interpolate position for smooth movement
                 let x = (prevSeg.x + (seg.x - prevSeg.x) * animProgress);
                 let y = (prevSeg.y + (seg.y - prevSeg.y) * animProgress);
-                // The head should rotate based on direction
-                let angle = 0;
-                if (i === 0) {
-                    // Calculate angle from direction
-                    if (direction.x === 1 && direction.y === 0) angle = 0;
-                    else if (direction.x === 0 && direction.y === 1) angle = Math.PI / 2;
-                    else if (direction.x === -1 && direction.y === 0) angle = Math.PI;
-                    else if (direction.x === 0 && direction.y === -1) angle = -Math.PI / 2;
-                }
-                drawTruck(x, y, seg.color, angle, i === 0);
+                drawTruck(x, y, seg.color);
             }
 
             // Draw the food as a random colored truck
@@ -389,19 +372,28 @@ function drawTruck(x, y, color, angle = 0, isHead = false) {
 
         function update() {
             if (gameOver) return;
-            // Move the head
+
             const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y, color: snake[0].color };
-            // Check collision with self or wall
-            if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount || snake.some(segment => segment.x === head.x && segment.y === head.y)) {
+            if (
+                head.x < 0 || 
+                head.x >= tileCount || 
+                head.y < 0 || 
+                head.y >= tileCount || 
+                snake.some(segment => segment.x === head.x && segment.y === head.y)
+            ) {
                 gameOver = true;
                 return;
             }
+
             prevSnake = snake.map(seg => ({ ...seg }));
             snake.unshift(head); // Add new head
+
             if (head.x === food.x && head.y === food.y) {
-                // Collect the truck (food): add it to the snake (with its color) at the end only
-                // Remove the last segment (so the convoy grows by 1, not 2)
-                food = generateFood();
+                // Ensure the food truck is added only once
+                if (!snake.some(segment => segment.x === food.x && segment.y === food.y)) {
+                    snake.push({ x: food.x, y: food.y, color: food.color });
+                }
+                food = generateFood(); // Generate new food
                 score++;
                 scoreDisplay.textContent = `Score: ${score}`;
 
@@ -427,17 +419,10 @@ function drawTruck(x, y, color, angle = 0, isHead = false) {
                     speed++;
                     speedDisplay.textContent = `Speed: ${speed}`;
                 }
-
-                // Activate the pop effect for 0.5s
-                headPopActive = true;
-                if (headPopTimer) clearTimeout(headPopTimer);
-                headPopTimer = setTimeout(() => {
-                    headPopActive = false;
-                }, 500);
             } else {
-                // Remove the last segment (no tail, just trucks collected)
-                snake.pop();
+                snake.pop(); // Remove the tail if no food is eaten
             }
+
             animProgress = 0;
             updateFloatingText(); // Update floating text position and opacity
         }
