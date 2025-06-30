@@ -448,6 +448,7 @@ function drawTruck(x, y, color, angle = 0) {
 
     ctx.save();
     ctx.translate(px + gridSize / 2, py + gridSize / 2);
+    // Always orient the cab/windshield to the right (0 radians)
     ctx.rotate(angle);
     ctx.translate(-gridSize / 2, -gridSize / 2);
 
@@ -495,23 +496,24 @@ function drawTruck(x, y, color, angle = 0) {
     ctx.fillRect(6, gridSize - 12, gridSize - 12, 2);
     ctx.restore();
 
-    // --- Draw cab (light gray with dark border, at top center) ---
+    // --- Draw cab (light gray with dark border, at right end) ---
     ctx.save();
     ctx.fillStyle = '#e0e0e0';
     ctx.strokeStyle = '#888';
     ctx.lineWidth = 2;
     const cabW = gridSize * 0.7;
     const cabH = gridSize * 0.28;
+    // Cab is at the right end, vertically centered
     ctx.beginPath();
-    ctx.rect((gridSize - cabW) / 2, 4, cabW, cabH);
+    ctx.rect(gridSize - cabW - 4, (gridSize - cabH) / 2, cabW, cabH);
     ctx.fill();
     ctx.stroke();
     ctx.restore();
 
-    // --- Draw windshield (darker gray, inside cab) ---
+    // --- Draw windshield (darker gray, inside cab, at right end) ---
     ctx.save();
     ctx.fillStyle = '#bdbdbd';
-    ctx.fillRect((gridSize - cabW) / 2 + 4, 8, cabW - 8, cabH - 8);
+    ctx.fillRect(gridSize - cabW - 4 + 4, (gridSize - cabH) / 2 + 4, cabW - 8, cabH - 8);
     ctx.restore();
 
     // --- Draw body details (vertical lines) ---
