@@ -517,6 +517,10 @@ function getTruckDrawParams(dir, prevDir = null) {
             }
 
 
+
+            // Draw the food truck first
+            drawTruck(food.x, food.y, food.color, 0, false);
+
             // Draw all trucks in the snake (head + collected trucks)
             for (let i = 0; i < snake.length; i++) {
                 let seg = snake[i];
@@ -530,6 +534,12 @@ function getTruckDrawParams(dir, prevDir = null) {
                     // Debug: log head truck position and color
                     console.log('Head truck:', { x, y, color: seg.color, angle, mirror });
                     drawTruck(x, y, seg.color, angle, mirror);
+                    // Draw a debug outline for the head truck
+                    ctx.save();
+                    ctx.strokeStyle = '#FF00FF';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(x * gridSize, y * gridSize, gridSize, gridSize);
+                    ctx.restore();
                 } else {
                     // For body, infer direction from previous segment, and also pass previous direction for left-turn mirroring
                     let angle = 0, mirror = false;
@@ -548,9 +558,6 @@ function getTruckDrawParams(dir, prevDir = null) {
                     drawTruck(x, y, seg.color, angle, mirror);
                 }
             }
-
-            // Draw the food as a random colored truck (always facing right)
-            drawTruck(food.x, food.y, food.color, 0, false);
 
             // Draw floating text
             drawFloatingText();
