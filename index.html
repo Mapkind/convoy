@@ -206,7 +206,7 @@ function startGame() {
                 snakeControls.style.transform = 'translateX(-50%)';
             }
 
-            // Move leaderboard inside the canvas (horizontally centered, under trucks)
+            // Move leaderboard inside the canvas (horizontally centered overlay, under trucks)
             const leaderboard = document.getElementById('leaderboard');
             const gameCanvas = document.getElementById('gameCanvas');
             if (leaderboard && gameCanvas && gameCanvas.parentNode) {
@@ -214,7 +214,7 @@ function startGame() {
                 if (gameCanvas.nextSibling !== leaderboard) {
                     gameCanvas.parentNode.insertBefore(leaderboard, gameCanvas.nextSibling);
                 }
-                // Set leaderboard width and center horizontally within the canvas, below the trucks
+                // Set leaderboard width and center horizontally within the canvas
                 const leaderboardWidth = Math.max(220, Math.floor(canvas.width * 0.7));
                 leaderboard.style.position = 'absolute';
                 leaderboard.style.width = leaderboardWidth + 'px';
@@ -223,7 +223,7 @@ function startGame() {
                 leaderboard.style.opacity = '0.5';
                 leaderboard.style.pointerEvents = 'none';
                 leaderboard.style.textAlign = 'center';
-                leaderboard.style.zIndex = 1;
+                leaderboard.style.zIndex = '1'; // Ensure it's under the trucks (canvas default z-index is auto/0)
             }
         }
         
