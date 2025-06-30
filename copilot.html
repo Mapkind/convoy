@@ -271,9 +271,14 @@ function drawTruck(x, y, color, angle = 0) {
     ctx.translate(-gridSize / 2, -gridSize / 2);
 
     // Draw the preloaded truck image on the canvas
-    ctx.fillStyle = color; // Use the truck's assigned color
+    ctx.drawImage(truckImage, 0, 0, gridSize, gridSize);
+
+    // Apply the truck's assigned color as a tint
+    ctx.globalCompositeOperation = 'source-atop';
+    ctx.fillStyle = color;
     ctx.fillRect(0, 0, gridSize, gridSize);
 
+    ctx.globalCompositeOperation = 'source-over'; // Reset composite operation
     ctx.restore();
 }
 
