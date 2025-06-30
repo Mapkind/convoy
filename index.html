@@ -519,6 +519,7 @@ function getTruckDrawParams(dir, prevDir = null) {
 
 
 
+
             // Draw the food as a random colored truck (always facing right)
             drawTruck(food.x, food.y, food.color, 0, false);
 
@@ -533,44 +534,6 @@ function getTruckDrawParams(dir, prevDir = null) {
                 if (i === 0) {
                     const { angle, mirror } = getTruckDrawParams(direction, snake[1] ? { x: snake[0].x - snake[1].x, y: snake[0].y - snake[1].y } : null);
                     drawTruck(x, y, seg.color, angle, mirror);
-                } else {
-                    // For body, infer direction from previous segment, and also pass previous direction for left-turn mirroring
-                    let angle = 0, mirror = false;
-                    if (i > 0) {
-                        let prev = snake[i - 1];
-                        let dx = seg.x - prev.x;
-                        let dy = seg.y - prev.y;
-                        // For mirroring, also need the direction before this segment
-                        let prevDir = null;
-                        if (i > 1) {
-                            let prev2 = snake[i - 2];
-                            prevDir = { x: prev.x - prev2.x, y: prev.y - prev2.y };
-                        }
-                        ({ angle, mirror } = getTruckDrawParams({ x: dx, y: dy }, prevDir));
-                    }
-                    drawTruck(x, y, seg.color, angle, mirror);
-                }
-            }
-
-            // Draw all trucks in the snake (head + collected trucks)
-            for (let i = 0; i < snake.length; i++) {
-                let seg = snake[i];
-                let prevSeg = prevSnake && prevSnake[i] ? prevSnake[i] : seg;
-                // Interpolate position for smooth movement
-                let x = (prevSeg.x + (seg.x - prevSeg.x) * animProgress);
-                let y = (prevSeg.y + (seg.y - prevSeg.y) * animProgress);
-                // For the head, use the current direction for angle/mirror
-                if (i === 0) {
-                    const { angle, mirror } = getTruckDrawParams(direction, snake[1] ? { x: snake[0].x - snake[1].x, y: snake[0].y - snake[1].y } : null);
-                    // Debug: log head truck position and color
-                    //console.log('Head truck:', { x, y, color: seg.color, angle, mirror });
-                    drawTruck(x, y, seg.color, angle, mirror);
-                    // Draw a debug outline for the head truck
-                    ctx.save();
-                    ctx.strokeStyle = '#FF00FF';
-                    ctx.lineWidth = 2;
-                    ctx.strokeRect(x * gridSize, y * gridSize, gridSize, gridSize);
-                    ctx.restore();
                 } else {
                     // For body, infer direction from previous segment, and also pass previous direction for left-turn mirroring
                     let angle = 0, mirror = false;
