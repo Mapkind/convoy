@@ -530,7 +530,7 @@ function getTruckDrawParams(dir, prevDir = null) {
                 if (i === 0) {
                     const { angle, mirror } = getTruckDrawParams(direction, snake[1] ? { x: snake[0].x - snake[1].x, y: snake[0].y - snake[1].y } : null);
                     // Debug: log head truck position and color
-                    console.log('Head truck:', { x, y, color: seg.color, angle, mirror });
+                    //console.log('Head truck:', { x, y, color: seg.color, angle, mirror });
                     drawTruck(x, y, seg.color, angle, mirror);
                 } else {
                     // For body, infer direction from previous segment, and also pass previous direction for left-turn mirroring
