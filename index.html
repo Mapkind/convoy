@@ -478,7 +478,7 @@ function drawTruck(x, y, color, angle = 0) {
                 ctx.fillStyle = 'red';
                 ctx.font = '20px "Press Start 2P"';
                 ctx.textAlign = 'center';
-                ctx.fillText('Game Over', canvas.width / 2, canvas.height / 2);
+                ctx.fillText('Game Over', canvas.width / 2, canvas.height - 50);
 
                 // Submit the score automatically if game is over
                 submitScore(score);
