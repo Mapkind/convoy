@@ -120,11 +120,17 @@ let headPopTimer = null;
 
 let leaderboard = []; // Array to store leaderboard entries
 
+// Each truck is an object: { x, y, color }
+function randomTruckColor() {
+    // Pick a random color for the truck body
+    const colors = ['#e53935', '#43a047', '#1e88e5', '#fbc02d', '#8e24aa', '#f57c00', '#00acc1', '#6d4c41'];
+    return colors[Math.floor(Math.random() * colors.length)];
+}
+
 function resetGame() {
-    // Start with a head and a tail segment so the tail is always drawn
+    // Start with a single truck (the head)
     snake = [
-        { x: 10, y: 10 }, // head
-        { x: 9, y: 10 }   // tail, placed behind head in initial direction
+        { x: 10, y: 10, color: '#444' } // The player's truck is always dark gray
     ];
     direction = { x: 1, y: 0 };
     food = generateFood();
@@ -184,13 +190,13 @@ function startGame() {
         window.addEventListener('scroll', positionDisplays); // Reposition on scroll (for mobile)
         positionDisplays(); // Initial positioning
 
-        function generateFood() {
-            let newFood;
-            do {
-                newFood = { x: Math.floor(Math.random() * tileCount), y: Math.floor(Math.random() * tileCount) };
-            } while (snake.some(segment => segment.x === newFood.x && segment.y === newFood.y));
-            return newFood;
-        }
+function generateFood() {
+    let newFood;
+    do {
+        newFood = { x: Math.floor(Math.random() * tileCount), y: Math.floor(Math.random() * tileCount), color: randomTruckColor() };
+    } while (snake.some(segment => segment.x === newFood.x && segment.y === newFood.y));
+    return newFood;
+}
 
 
         let floatingText = null; // Store the floating text object
@@ -237,6 +243,133 @@ function updateFloatingText() {
     }
 }
 
+// Draw a truck using a pixel-art style inspired by truck.png
+function drawTruck(x, y, color, angle = 0, isHead = false) {
+    const px = x * gridSize;
+    const py = y * gridSize;
+    ctx.save();
+    ctx.translate(px + gridSize / 2, py + gridSize / 2);
+    ctx.rotate(angle);
+    ctx.translate(-gridSize / 2, -gridSize / 2);
+
+    // Draw tires (big, chunky, dark)
+    function drawTire(tx, ty, w, h) {
+        ctx.save();
+        ctx.fillStyle = '#23211d';
+        ctx.strokeStyle = '#181715';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.ellipse(tx, ty, w, h, 0, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.stroke();
+        // Tread pattern
+        ctx.strokeStyle = '#35332e';
+        ctx.lineWidth = 0.7;
+        for (let i = -2; i <= 2; i++) {
+            ctx.beginPath();
+            ctx.moveTo(tx - w * 0.7, ty + i * 2);
+            ctx.lineTo(tx + w * 0.7, ty + i * 2);
+            ctx.stroke();
+        }
+        ctx.restore();
+    }
+    // Four tires
+    drawTire(4, 4, 4, 6);
+    drawTire(gridSize - 4, 4, 4, 6);
+    drawTire(4, gridSize - 4, 4, 6);
+    drawTire(gridSize - 4, gridSize - 4, 4, 6);
+
+    // Main body (blue or color)
+    ctx.save();
+    ctx.fillStyle = color;
+    ctx.strokeStyle = '#2699c7';
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(4, 4);
+    ctx.lineTo(gridSize - 4, 4);
+    ctx.lineTo(gridSize - 4, gridSize - 4);
+    ctx.lineTo(4, gridSize - 4);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+
+    // Bed (bottom section, slightly darker)
+    ctx.save();
+    ctx.fillStyle = '#2bafd6';
+    ctx.fillRect(6, gridSize - 12, gridSize - 12, 8);
+    ctx.restore();
+
+    // Cab (top section, light gray)
+    ctx.save();
+    ctx.fillStyle = '#e0e0e0';
+    ctx.strokeStyle = '#888';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(8, 8);
+    ctx.lineTo(gridSize - 8, 8);
+    ctx.lineTo(gridSize - 8, gridSize / 2 + 2);
+    ctx.lineTo(8, gridSize / 2 + 2);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+
+    // Windshield (white)
+    ctx.save();
+    ctx.fillStyle = '#f5f5f5';
+    ctx.fillRect(10, 10, gridSize - 20, gridSize / 2 - 10);
+    ctx.restore();
+
+    // Stripes (orange/yellow)
+    ctx.save();
+    ctx.strokeStyle = '#ff9800';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(7, gridSize / 2 + 4);
+    ctx.lineTo(gridSize - 7, gridSize / 2 + 4);
+    ctx.stroke();
+    ctx.strokeStyle = '#ffd600';
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(7, gridSize / 2 + 6);
+    ctx.lineTo(gridSize - 7, gridSize / 2 + 6);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(7, gridSize - 8);
+    ctx.lineTo(gridSize - 7, gridSize - 8);
+    ctx.stroke();
+    ctx.strokeStyle = '#ffd600';
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(7, gridSize - 6);
+    ctx.lineTo(gridSize - 7, gridSize - 6);
+    ctx.stroke();
+    ctx.restore();
+
+    // Bed lines
+    ctx.save();
+    ctx.strokeStyle = '#29b6f6';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < 4; i++) {
+        ctx.beginPath();
+        ctx.moveTo(8 + i * 4, gridSize - 12);
+        ctx.lineTo(8 + i * 4, gridSize - 4);
+        ctx.stroke();
+    }
+    ctx.restore();
+
+    // Border for the head truck
+    if (isHead) {
+        ctx.save();
+        ctx.lineWidth = 2.5;
+        ctx.strokeStyle = '#ffd600';
+        ctx.strokeRect(2, 2, gridSize - 4, gridSize - 4);
+        ctx.restore();
+    }
+    ctx.restore();
+}
+
         function draw() {
             // Draw background
             ctx.fillStyle = '#000';
@@ -267,183 +400,31 @@ function updateFloatingText() {
                 return;
             }
 
-            // Draw snake body (excluding head and tail) as circles, interpolated
-            ctx.fillStyle = 'lime';
-            for (let i = 1; i < snake.length - 1; i++) {
+            // Draw all trucks in the snake (head + collected trucks)
+
+            for (let i = 0; i < snake.length; i++) {
                 let seg = snake[i];
                 let prevSeg = prevSnake && prevSnake[i] ? prevSnake[i] : seg;
-                let x = (prevSeg.x + (seg.x - prevSeg.x) * animProgress) * gridSize + gridSize / 2;
-                let y = (prevSeg.y + (seg.y - prevSeg.y) * animProgress) * gridSize + gridSize / 2;
-                let r = gridSize / 2;
-                ctx.beginPath();
-                ctx.arc(x, y, r, 0, 2 * Math.PI);
-                ctx.fill();
-            }
-
-            // Draw extra circles where body segments meet (including head and tail junctions), interpolated
-            ctx.fillStyle = 'lime';
-            let drawJunctionCircle = (segA, segB, prevA, prevB) => {
-                if (Math.abs(segA.x - segB.x) + Math.abs(segA.y - segB.y) === 1) {
-                    let xA = (prevA.x + (segA.x - prevA.x) * animProgress);
-                    let yA = (prevA.y + (segA.y - prevA.y) * animProgress);
-                    let xB = (prevB.x + (segB.x - prevB.x) * animProgress);
-                    let yB = (prevB.y + (segB.y - prevB.y) * animProgress);
-                    let x = (xA + xB) / 2 * gridSize + gridSize / 2;
-                    let y = (yA + yB) / 2 * gridSize + gridSize / 2;
-                    let r = gridSize / 2;
-                    ctx.beginPath();
-                    ctx.arc(x, y, r, 0, 2 * Math.PI);
-                    ctx.fill();
+                // Interpolate position for smooth movement
+                let x = (prevSeg.x + (seg.x - prevSeg.x) * animProgress);
+                let y = (prevSeg.y + (seg.y - prevSeg.y) * animProgress);
+                // The head should rotate based on direction
+                let angle = 0;
+                if (i === 0) {
+                    // Calculate angle from direction
+                    if (direction.x === 1 && direction.y === 0) angle = 0;
+                    else if (direction.x === 0 && direction.y === 1) angle = Math.PI / 2;
+                    else if (direction.x === -1 && direction.y === 0) angle = Math.PI;
+                    else if (direction.x === 0 && direction.y === -1) angle = -Math.PI / 2;
                 }
-            };
-            // Head junction
-            if (snake.length > 1) {
-                let prevA = prevSnake && prevSnake[0] ? prevSnake[0] : snake[0];
-                let prevB = prevSnake && prevSnake[1] ? prevSnake[1] : snake[1];
-                drawJunctionCircle(snake[0], snake[1], prevA, prevB);
-            }
-            // Body junctions
-            for (let i = 1; i < snake.length - 2; i++) {
-                let prevA = prevSnake && prevSnake[i] ? prevSnake[i] : snake[i];
-                let prevB = prevSnake && prevSnake[i + 1] ? prevSnake[i + 1] : snake[i + 1];
-                drawJunctionCircle(snake[i], snake[i + 1], prevA, prevB);
-            }
-            // Tail junction
-            if (snake.length > 2) {
-                let prevA = prevSnake && prevSnake[snake.length - 2] ? prevSnake[snake.length - 2] : snake[snake.length - 2];
-                let prevB = prevSnake && prevSnake[snake.length - 1] ? prevSnake[snake.length - 1] : snake[snake.length - 1];
-                drawJunctionCircle(snake[snake.length - 2], snake[snake.length - 1], prevA, prevB);
+                drawTruck(x, y, seg.color, angle, i === 0);
             }
 
-            // Draw the always-present, 40% larger, transparent head overlay
-            if (snake.length > 0) {
-                let seg = snake[0];
-                let prevSeg = prevSnake && prevSnake[0] ? prevSnake[0] : seg;
-                let x = (prevSeg.x + (seg.x - prevSeg.x) * animProgress) * gridSize + gridSize / 2;
-                let y = (prevSeg.y + (seg.y - prevSeg.y) * animProgress) * gridSize + gridSize / 2;
-                let r = gridSize / 2;
-                // Draw the larger overlay (40% larger)
-                ctx.save();
-                ctx.beginPath();
-                ctx.arc(x, y, r * 1.4, 0, 2 * Math.PI);
-                ctx.globalAlpha = headPopActive ? 1.0 : 0.0;
-                ctx.fillStyle = 'lime';
-                ctx.fill();
-                ctx.globalAlpha = 1.0;
-                ctx.restore();
-            }
+            // Draw the food as a random colored truck
+            drawTruck(food.x, food.y, food.color);
 
-            // Draw snake head as a circle, interpolated, with two black eyes that rotate based on direction
-            if (snake.length > 0) {
-                let seg = snake[0];
-                let prevSeg = prevSnake && prevSnake[0] ? prevSnake[0] : seg;
-                let x = (prevSeg.x + (seg.x - prevSeg.x) * animProgress) * gridSize + gridSize / 2;
-                let y = (prevSeg.y + (seg.y - prevSeg.y) * animProgress) * gridSize + gridSize / 2;
-                let r = gridSize / 2;
-                ctx.fillStyle = 'lime';
-                ctx.beginPath();
-                ctx.arc(x, y, r, 0, 2 * Math.PI);
-                ctx.fill();
-
-                // Calculate eye positions based on direction
-                let eyeRadius = r * 0.15;
-                let eyeSpread = r * 0.4; // distance between eyes (center to center)
-                let eyeForward = r * 0.25; // how far forward the eyes are
-                // Normalize direction for diagonal smoothing (should only be cardinal, but just in case)
-                let dx = direction.x, dy = direction.y;
-                let mag = Math.sqrt(dx * dx + dy * dy);
-                if (mag === 0) { dx = 0; dy = -1; } // default to up
-                else { dx /= mag; dy /= mag; }
-                // Perpendicular vector for eye spread
-                let perpX = -dy, perpY = dx;
-                // Eye centers
-                let leftEyeX = x + perpX * (eyeSpread / 2) + dx * eyeForward;
-                let leftEyeY = y + perpY * (eyeSpread / 2) + dy * eyeForward;
-                let rightEyeX = x - perpX * (eyeSpread / 2) + dx * eyeForward;
-                let rightEyeY = y - perpY * (eyeSpread / 2) + dy * eyeForward;
-                ctx.fillStyle = 'black';
-                // Left eye
-                ctx.beginPath();
-                ctx.arc(leftEyeX, leftEyeY, eyeRadius, 0, 2 * Math.PI);
-                ctx.fill();
-                // Right eye
-                ctx.beginPath();
-                ctx.arc(rightEyeX, rightEyeY, eyeRadius, 0, 2 * Math.PI);
-                ctx.fill();
-            }
-
-            // Draw snake tail as a triangle, interpolated
-            if (snake.length > 1) {
-                let tail = snake[snake.length - 1];
-                let beforeTail = snake[snake.length - 2];
-                let prevTail = prevSnake && prevSnake[snake.length - 1] ? prevSnake[snake.length - 1] : tail;
-                let prevBeforeTail = prevSnake && prevSnake[snake.length - 2] ? prevSnake[snake.length - 2] : beforeTail;
-                let tx = (prevTail.x + (tail.x - prevTail.x) * animProgress) * gridSize;
-                let ty = (prevTail.y + (tail.y - prevTail.y) * animProgress) * gridSize;
-                let btx = (prevBeforeTail.x + (beforeTail.x - prevBeforeTail.x) * animProgress) * gridSize;
-                let bty = (prevBeforeTail.y + (beforeTail.y - prevBeforeTail.y) * animProgress) * gridSize;
-                let dx = Math.round((tx - btx) / gridSize);
-                let dy = Math.round((ty - bty) / gridSize);
-                ctx.fillStyle = 'lime';
-                ctx.beginPath();
-                if (dx === 1 && dy === 0) {
-                    ctx.moveTo(tx, ty);
-                    ctx.lineTo(tx, ty + gridSize);
-                    ctx.lineTo(tx + gridSize, ty + gridSize / 2);
-                    ctx.closePath();
-                } else if (dx === -1 && dy === 0) {
-                    ctx.moveTo(tx + gridSize, ty);
-                    ctx.lineTo(tx + gridSize, ty + gridSize);
-                    ctx.lineTo(tx, ty + gridSize / 2);
-                    ctx.closePath();
-                } else if (dx === 0 && dy === 1) {
-                    ctx.moveTo(tx, ty);
-                    ctx.lineTo(tx + gridSize, ty);
-                    ctx.lineTo(tx + gridSize / 2, ty + gridSize);
-                    ctx.closePath();
-                } else if (dx === 0 && dy === -1) {
-                    ctx.moveTo(tx, ty + gridSize);
-                    ctx.lineTo(tx + gridSize, ty + gridSize);
-                    ctx.lineTo(tx + gridSize / 2, ty);
-                    ctx.closePath();
-                } else {
-                    ctx.rect(tx, ty, gridSize, gridSize);
-                }
-                ctx.fill();
-            }
-
-            // Draw food as an apple
-            let fx = food.x * gridSize + gridSize / 2;
-            let fy = food.y * gridSize + gridSize / 2;
-            let appleRadius = gridSize * 0.45;
-            // Apple body
-            ctx.beginPath();
-            ctx.arc(fx, fy, appleRadius, 0, 2 * Math.PI);
-            ctx.fillStyle = 'red';
-            ctx.shadowColor = '#900';
-            ctx.shadowBlur = 8;
-            ctx.fill();
-            ctx.shadowBlur = 0;
-            // Apple highlight
-            ctx.beginPath();
-            ctx.arc(fx - appleRadius * 0.3, fy - appleRadius * 0.3, appleRadius * 0.2, 0, 2 * Math.PI);
-            ctx.fillStyle = 'rgba(255,255,255,0.5)';
-            ctx.fill();
-            // Apple stem
-            ctx.beginPath();
-            ctx.strokeStyle = '#654321';
-            ctx.lineWidth = 2;
-            ctx.moveTo(fx, fy - appleRadius);
-            ctx.lineTo(fx, fy - appleRadius - gridSize * 0.2);
-            ctx.stroke();
-            // Apple leaf
-            ctx.beginPath();
-            ctx.fillStyle = '#3c3';
-            ctx.ellipse(fx + gridSize * 0.13, fy - appleRadius - gridSize * 0.08, gridSize * 0.11, gridSize * 0.05, Math.PI / 6, 0, 2 * Math.PI);
-            ctx.fill();
-
-                // Draw floating text
-                drawFloatingText();
+            // Draw floating text
+            drawFloatingText();
         }
 
         async function fetchLeaderboard() {
@@ -494,14 +475,18 @@ function updateFloatingText() {
 
         function update() {
             if (gameOver) return;
-            const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
+            // Move the head
+            const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y, color: snake[0].color };
+            // Check collision with self or wall
             if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount || snake.some(segment => segment.x === head.x && segment.y === head.y)) {
                 gameOver = true;
                 return;
             }
             prevSnake = snake.map(seg => ({ ...seg }));
-            snake.unshift(head);
+            snake.unshift(head); // Add new head
             if (head.x === food.x && head.y === food.y) {
+                // Collect the truck (food): add it to the snake (with its color) at the end only
+                // Remove the last segment (so the convoy grows by 1, not 2)
                 food = generateFood();
                 score++;
                 scoreDisplay.textContent = `Score: ${score}`;
@@ -536,6 +521,7 @@ function updateFloatingText() {
                     headPopActive = false;
                 }, 500);
             } else {
+                // Remove the last segment (no tail, just trucks collected)
                 snake.pop();
             }
             animProgress = 0;
