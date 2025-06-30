@@ -520,8 +520,30 @@ function getTruckDrawParams(dir, prevDir = null) {
 
 
 
-            // Draw the food as a random colored truck (always facing right)
+            // Debug: Log food truck position and color
+            console.log('Food truck position:', food.x, food.y, 'color:', food.color);
+            // Draw a debug rectangle for the food truck
+            ctx.save();
+            ctx.strokeStyle = 'magenta';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(food.x * gridSize, food.y * gridSize, gridSize, gridSize);
+            ctx.restore();
+            // Debug: Draw a magenta rectangle behind the food truck
+            ctx.save();
+            ctx.globalAlpha = 0.3;
+            ctx.fillStyle = 'magenta';
+            ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize, gridSize);
+            ctx.restore();
+
+            // Debug: Log food truck position and color
+            console.log('Food truck at', food.x, food.y, 'color:', food.color);
+
+            // If food overlaps head, draw it semi-transparent for debug
+            let foodAlpha = (food.x === snake[0].x && food.y === snake[0].y) ? 0.5 : 1.0;
+            ctx.save();
+            ctx.globalAlpha = foodAlpha;
             drawTruck(food.x, food.y, food.color, 0, false);
+            ctx.restore();
 
             // Draw all trucks in the snake (head + collected trucks)
             for (let i = 0; i < snake.length; i++) {
