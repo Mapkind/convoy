@@ -54,9 +54,9 @@
     <div id="speedDisplay" style="position: absolute; color: white; font-size: 20px;">Speed: 1</div>
     <canvas id="gameCanvas" width="400" height="400"></canvas>
 
-    <div id="leaderboard" style="position: absolute; top: 10px; left: 10px; color: white; font-size: 16px; pointer-events: none; width: 100%; text-align: left; opacity: 0.5;">
+    <div id="leaderboard" style="position: absolute; top: 10px; left: 10px; color: white; font-size: 16px; pointer-events: none; width: 100%; text-align: center; opacity: 0.5;">
         <h3 style="margin:0;">Leaderboard</h3>
-        <ol id="leaderboardList" style="margin:0; padding-left: 1.5em;"></ol>
+        <ol id="leaderboardList" style="margin:0 auto; display: inline-block; text-align: left; padding-left: 1.5em;"></ol>
     </div>
 
     <button id="startButton" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 20px; padding: 10px;">Start!</button>
@@ -222,7 +222,7 @@ function startGame() {
                 leaderboard.style.top = (canvasRect.top + 20 + window.scrollY) + 'px';
                 leaderboard.style.opacity = '0.2';
                 leaderboard.style.pointerEvents = 'none';
-                leaderboard.style.textAlign = 'center';
+                leaderboard.style.textAlign = 'left';
             }
         }
         
