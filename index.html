@@ -467,7 +467,8 @@ function drawTruck(x, y, color, angle = 0) {
     ctx.save();
     ctx.fillStyle = '#111';
     const tireSize = gridSize * 0.22;
-    const offset = tireSize * 0.4;
+    // Increase offset so tires stick out more
+    const offset = tireSize * 1.0;
     // Top left
     ctx.fillRect(bodyX - offset, bodyY - offset, tireSize, tireSize);
     // Top right
