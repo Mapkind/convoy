@@ -86,9 +86,9 @@
             <a href="#" id="toggleAuthMode" style="color: blue; text-decoration: underline;">Not a user? Sign up here.</a>
         </p>
     </div>
-    <svg id="truckSVG" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="1.5" width="24" height="24" color="lime" style="display: none;">
+    <svg id="truckSVG" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="1.5" width="24" height="24" color="white" style="display: none;">
         <defs>
-            <style>.cls-637b87aff95e86b59c57a1a5-1{fill:none;stroke:lime;stroke-miterlimit:10;}</style>
+            <style>.cls-637b87aff95e86b59c57a1a5-1{fill:none;stroke:#ffffff;stroke-miterlimit:10;}</style>
         </defs>
         <line class="cls-637b87aff95e86b59c57a1a5-1" x1="15.87" y1="17.8" x2="12" y2="17.8"></line>
         <polyline class="cls-637b87aff95e86b59c57a1a5-1" points="7.71 17.8 5.32 17.8 5.32 12.07 6.27 6.34 17.73 6.34 19.64 12.07 22.5 12.07 22.5 17.8 20.54 17.8"></polyline>
@@ -142,7 +142,7 @@ function randomTruckColor() {
 function resetGame() {
     // Start with a single truck (the head)
     snake = [
-        { x: 10, y: 10, color: '#444' } // The player's truck is always dark gray
+        { x: 10, y: 10, color: 'lime' } // The player's truck is always lime
     ];
     direction = { x: 1, y: 0 };
     food = generateFood();
@@ -274,7 +274,7 @@ function drawTruck(x, y, color, angle = 0) {
     ctx.drawImage(truckImage, 0, 0, gridSize, gridSize);
 
     // Apply the truck's assigned color as a tint
-    ctx.globalCompositeOperation = 'source-atop';
+    ctx.globalCompositeOperation = 'multiply'; // Use 'multiply' to blend the color with the image
     ctx.fillStyle = color;
     ctx.fillRect(0, 0, gridSize, gridSize);
 
@@ -397,6 +397,7 @@ function drawTruck(x, y, color, angle = 0) {
                 // Ensure the food truck is added only once
                 if (!snake.some(segment => segment.x === food.x && segment.y === food.y)) {
                     snake.push({ x: food.x, y: food.y, color: food.color });
+                    console.log("Snake array after eating food:", snake);
                 }
                 food = generateFood(); // Generate new food
                 score++;
