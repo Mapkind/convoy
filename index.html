@@ -220,10 +220,10 @@ function startGame() {
                 leaderboard.style.width = leaderboardWidth + 'px';
                 leaderboard.style.left = (canvasRect.left + (canvas.width - leaderboardWidth) / 2 + window.scrollX) + 'px';
                 leaderboard.style.top = (canvasRect.top + canvas.height - leaderboard.offsetHeight - 20 + window.scrollY) + 'px';
-                leaderboard.style.opacity = '0.5';
+                leaderboard.style.opacity = '0.1';
                 leaderboard.style.pointerEvents = 'none';
                 leaderboard.style.textAlign = 'center';
-                leaderboard.style.zIndex = '1'; // Ensure it's under the trucks (canvas default z-index is auto/0)
+                leaderboard.style.zIndex = '0'; // Ensure it's under the trucks (canvas default z-index is auto/0)
             }
         }
         
