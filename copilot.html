@@ -396,6 +396,7 @@ function drawTruck(x, y, color, angle = 0) {
             if (head.x === food.x && head.y === food.y) {
                 // Ensure the food truck is added only once
                 if (!snake.some(segment => segment.x === food.x && segment.y === food.y)) {
+                    console.log("Truck saved! ", food);
                     snake.push({ x: food.x, y: food.y, color: food.color });
                     console.log("Snake array after eating food:", snake);
                 }
