@@ -86,7 +86,7 @@
             <a href="#" id="toggleAuthMode" style="color: blue; text-decoration: underline;">Not a user? Sign up here.</a>
         </p>
     </div>
-    <svg id="truckSVG" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="1.5" width="24" height="24" color="white" style="display: none;">
+    <svg id="truckSVGold" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="1.5" width="24" height="24" color="white" style="display: none;">
         <defs>
             <style>.cls-637b87aff95e86b59c57a1a5-1{fill:none;stroke:#ffffff;stroke-miterlimit:10;}</style>
         </defs>
@@ -98,6 +98,20 @@
         <line class="cls-637b87aff95e86b59c57a1a5-1" x1="12.95" y1="8.25" x2="12.95" y2="12.07"></line>
         <rect class="cls-637b87aff95e86b59c57a1a5-1" x="1.5" y="9.2" width="3.82" height="6.68" rx="1.91"></rect>
     </svg>
+
+    <svg id="truckSVG" data-name="truckSVG" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" width="40" height="40" color="white">
+        <defs>
+            <style>.cls-637b87aff95e86b59c57a1a5-1{fill:none;stroke:currentColor;stroke-miterlimit:10;}</style>
+        </defs>
+        <line class="cls-637b87aff95e86b59c57a1a5-1" x1="15.87" y1="17.8" x2="12" y2="17.8"></line>
+        <polyline class="cls-637b87aff95e86b59c57a1a5-1" points="7.71 17.8 5.32 17.8 5.32 12.07 6.27 6.34 17.73 6.34 19.64 12.07 22.5 12.07 22.5 17.8 20.54 17.8"></polyline>
+        <circle class="cls-637b87aff95e86b59c57a1a5-1" cx="18.2" cy="18.27" r="2.39"></circle>
+        <circle class="cls-637b87aff95e86b59c57a1a5-1" cx="9.61" cy="18.27" r="2.39"></circle>
+        <line class="cls-637b87aff95e86b59c57a1a5-1" x1="19.64" y1="12.07" x2="8.18" y2="12.07"></line>
+        <line class="cls-637b87aff95e86b59c57a1a5-1" x1="12.95" y1="8.25" x2="12.95" y2="12.07"></line>
+        <rect class="cls-637b87aff95e86b59c57a1a5-1" x="1.5" y="9.2" width="3.82" height="6.68" rx="1.91"></rect>
+    </svg>
+
     <script>
         const { createClient } = supabase
         const _supabase = createClient('https://qplxbyiotkuvsvganuhn.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFwbHhieWlvdGt1dnN2Z2FudWhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTEwNTkwMTUsImV4cCI6MjA2NjYzNTAxNX0.NM4YbUhQmlqw9ugOBEYQLgVSlg2gR3RE-sTQKRXGSvk')
