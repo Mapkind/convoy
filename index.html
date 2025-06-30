@@ -30,6 +30,7 @@
         #authModal {
             display: none;
             position: fixed;
+            width: 300px; /* Fixed width for the modal */
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
@@ -78,14 +79,14 @@
     </div>
 
     <div id="authModal" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
-        <h3 id="authModalTitle">Log In</h3>
+        <h3 id="authModalTitle">Sign In/Sign Up</h3>
         <form id="authForm">
-            <input type="email" id="email" placeholder="Email" required style="display: block; margin-bottom: 10px; width: 100%; padding: 10px;">
+            <input type="email" id="email" placeholder="Email" required style="display: block; margin-bottom: 10px; width: 250px; padding: 10px;">
             <button type="submit" style="padding: 10px 20px; font-size: 16px;">Submit</button>
         </form>
-        <p style="margin-top: 10px; text-align: center;">
+        <!--<p style="margin-top: 10px; text-align: center;">
             <a href="#" id="toggleAuthMode" style="color: blue; text-decoration: underline;">Not a user? Sign up here.</a>
-        </p>
+        </p>-->
     </div>
 
     <svg id="truckSVG" data-name="truckSVG" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" width="24" height="24" color="white" style="display: none;">
@@ -697,7 +698,7 @@ function drawTruck(x, y, color, angle = 0) {
         const authModal = document.getElementById('authModal');
         const authForm = document.getElementById('authForm');
         let emailInput = document.getElementById('email');
-        const toggleAuthMode = document.getElementById('toggleAuthMode');
+        //const toggleAuthMode = document.getElementById('toggleAuthMode');
         const authModalTitle = document.getElementById('authModalTitle');
 
         let isSignUpMode = false; // Tracks whether the modal is in sign-up or login mode
@@ -852,7 +853,7 @@ function drawTruck(x, y, color, angle = 0) {
             }
         });
 
-        toggleAuthMode.addEventListener('click', (e) => {
+        /*toggleAuthMode.addEventListener('click', (e) => {
             e.preventDefault();
             isSignUpMode = !isSignUpMode;
             toggleAuthMode.textContent = isSignUpMode ? 'Already a user? Log in here.' : 'Not a user? Sign up here.';
@@ -866,7 +867,7 @@ function drawTruck(x, y, color, angle = 0) {
                     <input type="email" id="email" placeholder="Email" required style="display: block; margin-bottom: 10px; width: 100%; padding: 10px;">
                     <button type="submit" style="padding: 10px 20px; font-size: 16px;">Submit</button>
                 `;
-        });
+        });*/
 
         startButton.addEventListener('click', async () => {
             const { data: { user } } = await _supabase.auth.getUser();
