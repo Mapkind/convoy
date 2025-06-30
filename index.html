@@ -54,9 +54,9 @@
     <div id="speedDisplay" style="position: absolute; color: white; font-size: 20px;">Speed: 1</div>
     <canvas id="gameCanvas" width="400" height="400"></canvas>
 
-    <div id="leaderboard" style="position: absolute; top: 10px; left: 10px; color: white; font-size: 16px;">
-        <h3>Leaderboard</h3>
-        <ol id="leaderboardList"></ol>
+    <div id="leaderboard" style="position: absolute; top: 10px; left: 10px; color: white; font-size: 16px; pointer-events: none; width: 100%; text-align: left; opacity: 0.5;">
+        <h3 style="margin:0;">Leaderboard</h3>
+        <ol id="leaderboardList" style="margin:0; padding-left: 1.5em;"></ol>
     </div>
 
     <button id="startButton" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 20px; padding: 10px;">Start!</button>
@@ -204,6 +204,24 @@ function startGame() {
                 snakeControls.style.top = `${canvasRect.bottom + 20 + window.scrollY}px`;
                 snakeControls.style.left = `${canvasRect.left + canvasRect.width / 2 + window.scrollX}px`;
                 snakeControls.style.transform = 'translateX(-50%)';
+            }
+
+            // Move leaderboard inside the canvas (centered overlay)
+            const leaderboard = document.getElementById('leaderboard');
+            const gameCanvas = document.getElementById('gameCanvas');
+            if (leaderboard && gameCanvas && gameCanvas.parentNode) {
+                // Insert leaderboard as a sibling after the canvas if not already
+                if (gameCanvas.nextSibling !== leaderboard) {
+                    gameCanvas.parentNode.insertBefore(leaderboard, gameCanvas.nextSibling);
+                }
+                // Center leaderboard absolutely within the canvas area
+                leaderboard.style.position = 'absolute';
+                leaderboard.style.width = `${Math.max(220, Math.floor(canvas.width * 0.7))}px`;
+                leaderboard.style.left = `${canvasRect.left + (canvas.width - leaderboard.offsetWidth) / 2 + window.scrollX}px`;
+                leaderboard.style.top = `${canvasRect.top + 20 + window.scrollY}px`;
+                leaderboard.style.opacity = '0.5';
+                leaderboard.style.pointerEvents = 'none';
+                leaderboard.style.textAlign = 'center';
             }
         }
         
