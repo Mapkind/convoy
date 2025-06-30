@@ -205,44 +205,8 @@ function startGame() {
                 snakeControls.style.left = `${canvasRect.left + canvasRect.width / 2 + window.scrollX}px`;
                 snakeControls.style.transform = 'translateX(-50%)';
             }
-
-            // Move leaderboard below controls on mobile, else keep it top-left
-            const leaderboard = document.getElementById('leaderboard');
-            if (isMobile()) {
-                leaderboard.style.position = 'static';
-                leaderboard.style.marginTop = '20px';
-                leaderboard.style.left = '';
-                leaderboard.style.top = '';
-                leaderboard.style.width = '90vw';
-                leaderboard.style.maxWidth = '400px';
-                leaderboard.style.background = 'rgba(0,0,0,0.7)';
-                leaderboard.style.borderRadius = '10px';
-                leaderboard.style.boxShadow = '0 2px 8px rgba(0,0,0,0.2)';
-                leaderboard.style.color = 'white';
-                leaderboard.style.fontSize = '16px';
-                leaderboard.style.padding = '10px 10px 10px 20px';
-                // Insert after controls if not already
-                if (snakeControls.nextSibling !== leaderboard) {
-                    snakeControls.parentNode.insertBefore(leaderboard, snakeControls.nextSibling);
-                }
-            } else {
-                leaderboard.style.position = 'absolute';
-                leaderboard.style.top = '10px';
-                leaderboard.style.left = '10px';
-                leaderboard.style.width = '';
-                leaderboard.style.maxWidth = '';
-                leaderboard.style.background = '';
-                leaderboard.style.borderRadius = '';
-                leaderboard.style.boxShadow = '';
-                leaderboard.style.color = 'white';
-                leaderboard.style.fontSize = '16px';
-                leaderboard.style.padding = '';
-                // Move leaderboard back to body if not already
-                if (leaderboard.parentNode !== document.body) {
-                    document.body.appendChild(leaderboard);
-                }
-            }
         }
+        
 
         window.addEventListener('resize', positionDisplays); // Reposition on window resize
         window.addEventListener('scroll', positionDisplays); // Reposition on scroll (for mobile)
