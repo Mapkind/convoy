@@ -509,8 +509,12 @@ function getTruckDrawParams(dir, prevDir = null) {
             }
 
 
-            // Draw the food truck (always, not just at game over) BELOW the snake
-            drawTruck(food.x, food.y, food.color, 0, false);
+
+            // Draw the food truck only if it is not hidden by the snake's head
+            // If the head is on the food, the head truck will be visible (eating)
+            if (!(snake[0].x === food.x && snake[0].y === food.y)) {
+                drawTruck(food.x, food.y, food.color, 0, false);
+            }
 
             // Draw all trucks in the snake (head + collected trucks)
             for (let i = 0; i < snake.length; i++) {
