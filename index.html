@@ -466,9 +466,9 @@ function drawTruck(x, y, color, angle = 0) {
     // --- Draw tires: black squares at each corner, sticking out and UNDER the body ---
     ctx.save();
     ctx.fillStyle = '#111';
-    const tireSize = gridSize * 0.22;
+    const tireSize = gridSize * 0.25;
     // Offset so tires stick out from all four corners
-    const offset = tireSize * 1.0;
+    const offset = tireSize * 0.8;
     // Top left
     ctx.fillRect(bodyX - offset, bodyY - offset, tireSize, tireSize);
     // Top right
