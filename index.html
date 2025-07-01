@@ -58,6 +58,7 @@
     </style>
 </head>
 <body>
+    <div id="gameOverMessage" style="position: absolute; color: #d15252; font-size: 26px; top: 50%; left: 50%; transform: translate(-50%, -50%); display: none;">GAME OVER</div>
     <div id="scoreDisplay" style="position: absolute; color: #f2ede2; font-size: 14px;">Score: 0</div>
     <div id="speedDisplay" style="position: absolute; color: #f2ede2; font-size: 14px;">Speed: 1</div>
     <canvas id="gameCanvas" width="400" height="400"></canvas>
@@ -664,6 +665,7 @@ function getTruckDrawAngle(dir) {
                 document.getElementById('leaderboard').style.opacity = 0.85;
                 //document.getElementById('leaderboard').style.zIndex = '1';
                 document.getElementById('leaderboard').style.backgroundColor = '#f2ede2';// Light background for contrast
+                document.getElementById('gameOverMessage').style.display = 'block';
                 ctx.fillStyle = 'red';
                 ctx.font = '20px "Press Start 2P"';
                 ctx.zIndex = '1005';
