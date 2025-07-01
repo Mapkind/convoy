@@ -463,21 +463,20 @@ function drawTruck(x, y, color, angle = 0) {
     const bodyX = (gridSize - bodyW) / 2;
     const bodyY = (gridSize - bodyH) / 2;
 
-    // --- Draw tires: black squares at each corner, sticking out only from the sides and UNDER the body ---
+    // --- Draw tires: black squares at each corner, sticking out and UNDER the body ---
     ctx.save();
     ctx.fillStyle = '#111';
     const tireSize = gridSize * 0.22;
-    // Offset so tires stick out only from the left/right sides
-    const sideOffset = tireSize * 1.0;
-    const verticalInset = (bodyH - tireSize) / 2;
-    // Left side, front
-    ctx.fillRect(bodyX - sideOffset, bodyY + verticalInset, tireSize, tireSize);
-    // Left side, rear
-    ctx.fillRect(bodyX - sideOffset, bodyY + bodyH - tireSize - verticalInset, tireSize, tireSize);
-    // Right side, front
-    ctx.fillRect(bodyX + bodyW - tireSize + sideOffset, bodyY + verticalInset, tireSize, tireSize);
-    // Right side, rear
-    ctx.fillRect(bodyX + bodyW - tireSize + sideOffset, bodyY + bodyH - tireSize - verticalInset, tireSize, tireSize);
+    // Offset so tires stick out from all four corners
+    const offset = tireSize * 1.0;
+    // Top left
+    ctx.fillRect(bodyX - offset, bodyY - offset, tireSize, tireSize);
+    // Top right
+    ctx.fillRect(bodyX + bodyW - tireSize + offset, bodyY - offset, tireSize, tireSize);
+    // Bottom left
+    ctx.fillRect(bodyX - offset, bodyY + bodyH - tireSize + offset, tireSize, tireSize);
+    // Bottom right
+    ctx.fillRect(bodyX + bodyW - tireSize + offset, bodyY + bodyH - tireSize + offset, tireSize, tireSize);
     ctx.restore();
 
     // Draw the truck body rectangle ON TOP of the tires
