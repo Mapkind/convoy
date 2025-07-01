@@ -456,22 +456,10 @@ function drawTruck(x, y, color, angle = 0) {
     ctx.translate(-gridSize / 2, -gridSize / 2);
 
 
-    // --- Draw main rectangle body ---
-    ctx.save();
-    ctx.globalAlpha = 1.0; // Make trucks fully opaque
-    ctx.fillStyle = color;
-    ctx.strokeStyle = shadeColor(color, -40);
-    ctx.lineWidth = 2;
-    const bodyW = gridSize * 0.9;
-    const bodyH = gridSize * 0.55;
-    const bodyX = (gridSize - bodyW) / 2;
-    const bodyY = (gridSize - bodyH) / 2;
-
     // --- Draw tires: black squares at each corner, sticking out and UNDER the body ---
     ctx.save();
     ctx.fillStyle = '#111';
     const tireSize = gridSize * 0.25;
-    // Offset so tires stick out from all four corners
     const offset = tireSize * 0.5;
     // Top left
     ctx.fillRect(bodyX - offset  + 4, bodyY - offset, tireSize, tireSize);
@@ -483,9 +471,24 @@ function drawTruck(x, y, color, angle = 0) {
     ctx.fillRect(bodyX + bodyW - tireSize + offset - 5, bodyY + bodyH - tireSize + offset, tireSize, tireSize);
     ctx.restore();
 
-    // Draw the truck body rectangle ON TOP of the tires, with rounded top right and bottom right corners
-    ctx.beginPath();
+    // --- Draw truck bed: 7px wide, 5px tall black rectangle at the rear (left) of the truck ---
+    ctx.save();
+    ctx.fillStyle = '#000';
+    const bedW = 7;
+    const bedH = 5;
+    const bedX = bodyX - 2; // Slightly outside the left edge of the body
+    const bedY = bodyY + (bodyH - bedH) / 2;
+    ctx.fillRect(bedX, bedY, bedW, bedH);
+    ctx.restore();
+
+    // --- Draw main rectangle body ON TOP of the tires and bed, with rounded top right and bottom right corners ---
+    ctx.save();
+    ctx.globalAlpha = 1.0; // Make trucks fully opaque
+    ctx.fillStyle = color;
+    ctx.strokeStyle = shadeColor(color, -40);
+    ctx.lineWidth = 2;
     const r = Math.min(bodyW, bodyH) * 0.25; // radius for right corners
+    ctx.beginPath();
     ctx.moveTo(bodyX, bodyY); // top left
     ctx.lineTo(bodyX + bodyW - r, bodyY); // top edge to before top right
     ctx.quadraticCurveTo(bodyX + bodyW, bodyY, bodyX + bodyW, bodyY + r); // round top right
