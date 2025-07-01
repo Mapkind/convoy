@@ -150,14 +150,14 @@ let leaderboard = []; // Array to store leaderboard entries
 // Each truck is an object: { x, y, color }
 function randomTruckColor() {
     // Pick a random color for the truck body
-    const colors = ['#e53935', '#43a047', '#1e88e5', '#fbc02d', '#8e24aa', '#f57c00', '#00acc1', '#6d4c41'];
+    const colors = ['#d15252', '#523f5c', '#fdff9e', '#e0e0e0', '#c29006', '#0c9ad6', '#a7876b', '#145460'];
     return colors[Math.floor(Math.random() * colors.length)];
 }
 
 function resetGame() {
     // Start with a single truck (the head)
     snake = [
-        { x: 10, y: 10, color: '#00FF00' } // The player's truck is always bright green
+        { x: 10, y: 10, color: '#749b7b' } // The player's truck is always MK green
     ];
     direction = { x: 1, y: 0 };
     food = generateFood();
