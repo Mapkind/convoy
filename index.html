@@ -357,20 +357,24 @@ function startGame() {
                     leaderboard.style.zIndex = '0';
                 }
             } else {
-                // Desktop: center score and speed horizontally above the canvas with a 50px gap, matching mobile
+                // Desktop: center score and speed horizontally just above the game canvas with a 50px gap
                 const gap = 10;
                 // Calculate widths (fallback if not rendered yet)
                 const scoreW = scoreDisplay.offsetWidth || 80;
                 const speedW = speedDisplay.offsetWidth || 80;
                 const totalW = scoreW + speedW + 50;
-                const centerX = window.innerWidth / 2 + window.scrollX;
+                // Get the canvas position
+                const canvasRect = canvas.getBoundingClientRect();
+                const centerX = canvasRect.left + canvasRect.width / 2 + window.scrollX;
+                // Place both displays just above the canvas
+                const displaysTop = canvasRect.top - (scoreDisplay.offsetHeight || 20) - gap + window.scrollY;
                 // Score: left of center
                 scoreDisplay.style.position = 'absolute';
-                scoreDisplay.style.top = `${gap + window.scrollY}px`;
+                scoreDisplay.style.top = `${displaysTop}px`;
                 scoreDisplay.style.left = `${centerX - totalW/2}px`;
                 // Speed: right of score, with 50px gap
                 speedDisplay.style.position = 'absolute';
-                speedDisplay.style.top = `${gap + window.scrollY}px`;
+                speedDisplay.style.top = `${displaysTop}px`;
                 speedDisplay.style.left = `${centerX - totalW/2 + scoreW + 50}px`;
 
                 // Controls: just below the canvas, centered
@@ -390,7 +394,6 @@ function startGame() {
                         gameCanvas.parentNode.insertBefore(leaderboard, gameCanvas.nextSibling);
                     }
                     // Set leaderboard width and center both horizontally and vertically within the canvas
-                    //const leaderboardWidth = Math.max(220, Math.floor(canvas.width * 0.7));
                     const leaderboardWidth = '400';
                     leaderboard.style.position = 'absolute';
                     leaderboard.style.width = leaderboardWidth + 'px';
