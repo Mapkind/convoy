@@ -510,7 +510,7 @@ function drawTruck(x, y, color, angle = 0) {
 
     // --- Draw cab: stroked square in the middle of the truck body ---
     ctx.save();
-    const cabSize = Math.min(bodyW, bodyH) * 0.38;
+    const cabSize = Math.min(bodyW, bodyH) * 0.5;
     const cabX = bodyX + (bodyW - cabSize) / 2;
     const cabY = bodyY + (bodyH - cabSize) / 2;
     ctx.strokeStyle = shadeColor(color, -40);
