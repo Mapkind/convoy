@@ -22,7 +22,7 @@
             background-size: 2560px 1600px;
         }
         canvas {
-            border: 1px solid #fff;
+            border: 2px solid #000000;
             background-color: #f2ede2;
         }
         #scoreDisplay, #speedDisplay, #leaderboard {
@@ -73,23 +73,23 @@
     <!-- Mobile-friendly arrow controls -->
     <div id="snakeControls" style="position: absolute; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; z-index: 10;">
         <div style="display: flex; justify-content: center;">
-            <button id="snakeControlsButtonUp" aria-label="Up" style="width: 60px; height: 60px; margin: 5px; font-size: 2em; border-radius: 50%; border: 2px solid #888; background: #eee;">▲</button>
+            <button id="snakeControlsButtonUp" aria-label="Up" style="width: 60px; height: 60px; margin: 5px; font-size: 2em; border-radius: 50%; border: 2px solid #888; background: #f2ede2;">▲</button>
         </div>
         <div style="display: flex; justify-content: center;">
-            <button id="snakeControlsButtonLeft" aria-label="Left" style="width: 60px; height: 60px; margin: 5px; font-size: 2em; border-radius: 50%; border: 2px solid #888; background: #eee;">◀</button>
+            <button id="snakeControlsButtonLeft" aria-label="Left" style="width: 60px; height: 60px; margin: 5px; font-size: 2em; border-radius: 50%; border: 2px solid #888; background: #f2ede2;">◀</button>
             <div style="width: 60px; height: 60px; margin: 5px;"></div>
-            <button id="snakeControlsButtonRight" aria-label="Right" style="width: 60px; height: 60px; margin: 5px; font-size: 2em; border-radius: 50%; border: 2px solid #888; background: #eee;">▶</button>
+            <button id="snakeControlsButtonRight" aria-label="Right" style="width: 60px; height: 60px; margin: 5px; font-size: 2em; border-radius: 50%; border: 2px solid #888; background: #f2ede2;">▶</button>
         </div>
         <div style="display: flex; justify-content: center;">
-            <button id="snakeControlsButtonDown" aria-label="Down" style="width: 60px; height: 60px; margin: 5px; font-size: 2em; border-radius: 50%; border: 2px solid #888; background: #eee;">▼</button>
+            <button id="snakeControlsButtonDown" aria-label="Down" style="width: 60px; height: 60px; margin: 5px; font-size: 2em; border-radius: 50%; border: 2px solid #888; background: #f2ede2;">▼</button>
         </div>
     </div>
 
     <div id="authModal" style="display: none; color: #f2ede2; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1c1f1c; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);">
         <h3 id="authModalTitle" style="color: #f2ede2; font-family: 'Press Start 2P', sans-serif; font-size: small;">Sign In/Sign Up</h3>
         <form id="authForm">
-            <input type="email" id="email" placeholder="Email" required style="display: block; margin-bottom: 10px; width: 250px; padding: 10px;">
-            <button type="submit" style="padding: 10px 20px; font-size: 16px; color: #1c1f1c; font-family: 'Press Start 2P', sans-serif; font-size: small;">Submit</button>
+            <input type="email" id="email" placeholder="Email" required style="display: block; margin-bottom: 10px; width: 250px; padding: 10px; background-color: #f2ede2;">
+            <button type="submit" style="padding: 10px 20px; font-size: 16px; color: #1c1f1c; font-family: 'Press Start 2P', sans-serif; font-size: small; background-color: #f2ede2;">Submit</button>
         </form>
         <!--<p style="margin-top: 10px; text-align: center;">
             <a href="#" id="toggleAuthMode" style="color: blue; text-decoration: underline;">Not a user? Sign up here.</a>
@@ -423,14 +423,14 @@ function drawFloatingText() {
     ctx.globalAlpha = opacity; // Set transparency
 
     // Draw white outline
-    ctx.strokeStyle = 'white';
+    ctx.strokeStyle = '#f2ede2';
     ctx.lineWidth = 5;
     ctx.font = '20px "Press Start 2P"';
     ctx.textAlign = 'center';
     ctx.strokeText('+1', x, y);
 
     // Draw purple fill
-    ctx.fillStyle = 'purple';
+    ctx.fillStyle = '#5b9472';
     ctx.fillText('+1', x, y);
 
     ctx.restore();
@@ -575,12 +575,12 @@ function getTruckDrawAngle(dir) {
 
         function draw() {
             // Draw background
-            ctx.fillStyle = '#f2ede2';// Light gray background
+            ctx.fillStyle = '#f2ede2';// Light gray background #f2ede2
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             // Draw countdown if active
             if (countdown > 0) {
-                ctx.fillStyle = 'purple';
+                ctx.fillStyle = '#5b9472'; // MK green
                 ctx.font = `${Math.floor(canvas.width * 0.8)}px 'Press Start 2P', sans-serif`;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
