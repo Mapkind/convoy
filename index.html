@@ -674,9 +674,12 @@ function getTruckDrawAngle(dir) {
                 const leaderboardList = document.getElementById('leaderboardList');
                 const leaderboardTitle = document.getElementById('leaderboardTitle');
                 const gameOverMessage = document.getElementById('gameOverMessage');
+                const gameCanvas = document.getElementById('gameCanvas');
+
+                gameCanvas.style.zIndex = '0'; // Move canvas behind leaderboard
 
                 leaderboard.style.zIndex = '1';
-                leaderboard.style.opacity = '1';
+                leaderboard.style.opacity = '0.85';
                 leaderboardList.style.opacity = '1';
                 leaderboardTitle.style.opacity = '1';
                 //document.getElementById('leaderboard').style.zIndex = '1';
