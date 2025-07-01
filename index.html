@@ -23,7 +23,7 @@
         }
         canvas {
             border: 2px solid #000000;
-            background-color: #f2ede2;
+            background: none;
         }
         #scoreDisplay, #speedDisplay, #leaderboard {
             font-family: 'Press Start 2P', sans-serif;
@@ -235,11 +235,32 @@ function startGame() {
         }
 
         function positionDisplays() {
+            // Place leaderboard directly behind the canvas and match its size/position
+            const leaderboard = document.getElementById('leaderboard');
+            const gameCanvas = document.getElementById('gameCanvas');
+            if (gameCanvas && leaderboard) {
+                const rect = gameCanvas.getBoundingClientRect();
+                // Insert leaderboard before the canvas if not already
+                if (gameCanvas.previousSibling !== leaderboard) {
+                    gameCanvas.parentNode.insertBefore(leaderboard, gameCanvas);
+                }
+                leaderboard.style.position = 'absolute';
+                leaderboard.style.left = rect.left + window.scrollX + 'px';
+                leaderboard.style.top = rect.top + window.scrollY + 'px';
+                leaderboard.style.width = rect.width + 'px';
+                leaderboard.style.height = rect.height + 'px';
+                leaderboard.style.zIndex = '0';
+                leaderboard.style.opacity = '0.85';
+                leaderboard.style.pointerEvents = 'none';
+                leaderboard.style.textAlign = 'center';
+                leaderboard.style.display = 'block';
+                leaderboard.style.background = '#f2ede2'; // Match the canvas background
+            }
             const gap = 10;
             const isMobileDevice = isMobile();
             // Center authModal over the game canvas on mobile
             const authModal = document.getElementById('authModal');
-            const gameCanvas = document.getElementById('gameCanvas');
+            
             if (isMobileDevice && authModal && gameCanvas) {
                 console.log('Positioning auth modal for mobile');
                 // Get canvas position and size
@@ -343,33 +364,7 @@ function startGame() {
                     snakeControls.style.transform = 'translateX(-50%)';
                 }
 
-                // Leaderboard: centered inside the game canvas (overlay, under trucks)
-                const leaderboard = document.getElementById('leaderboard');
-                if (leaderboard && gameCanvas) {
-                    // Insert leaderboard as a sibling after the canvas if not already
-                    if (gameCanvas.nextSibling !== leaderboard) {
-                        gameCanvas.parentNode.insertBefore(leaderboard, gameCanvas.nextSibling);
-                    }
-                    // Set leaderboard width and center both horizontally and vertically within the canvas
-                    //const leaderboardWidth = Math.max(220, Math.floor(gameCanvas.width * 0.7));
-                    const leaderboardWidth = '400';
-                    leaderboard.style.position = 'absolute';
-                    leaderboard.style.width = leaderboardWidth + 'px';
-                    leaderboard.style.left = (gameCanvas.getBoundingClientRect().left + (gameCanvas.width - leaderboardWidth) / 2 + window.scrollX) + 'px';
-                    // Vertically center: use flexbox on the leaderboard for content, but absolutely center the leaderboard itself
-                    leaderboard.style.visibility = 'hidden';
-                    leaderboard.style.display = 'block';
-                    // Force reflow
-                    void leaderboard.offsetHeight;
-                    const verticalCenter = gameCanvas.getBoundingClientRect().top + (gameCanvas.height - leaderboard.offsetHeight) / 2 + window.scrollY;
-                    leaderboard.style.top = `${verticalCenter}px`;
-                    leaderboard.style.visibility = 'visible';
-                    leaderboard.style.height = '400px';
-                    leaderboard.style.opacity = '0.85';
-                    leaderboard.style.pointerEvents = 'none';
-                    leaderboard.style.textAlign = 'center';
-                    leaderboard.style.zIndex = '0';
-                }
+                // Leaderboard: handled above, always placed behind the canvas and sized to match
             } else {
                 // Desktop: center score and speed horizontally just above the game canvas with a 50px gap
                 const gap = 10;
@@ -399,35 +394,7 @@ function startGame() {
                     snakeControls.style.transform = 'translateX(-50%)';
                 }
 
-                // Move leaderboard inside the canvas (centered overlay, under trucks)
-                const leaderboard = document.getElementById('leaderboard');
-                const gameCanvas = document.getElementById('gameCanvas');
-                if (leaderboard && gameCanvas && gameCanvas.parentNode) {
-                    // Insert leaderboard as a sibling after the canvas if not already
-                    if (gameCanvas.nextSibling !== leaderboard) {
-                        gameCanvas.parentNode.insertBefore(leaderboard, gameCanvas.nextSibling);
-                    }
-                    // Set leaderboard width and center both horizontally and vertically within the canvas
-                    const leaderboardWidth = '400';
-                    leaderboard.style.position = 'absolute';
-                    leaderboard.style.width = leaderboardWidth + 'px';
-                    leaderboard.style.height = '400px';
-                    leaderboard.style.left = (canvasRect.left + (canvas.width - leaderboardWidth) / 2 + window.scrollX) + 'px';
-
-                    // Vertically center: use flexbox on the leaderboard for content, but absolutely center the leaderboard itself
-                    leaderboard.style.visibility = 'hidden';
-                    leaderboard.style.display = 'block';
-                    // Force reflow
-                    void leaderboard.offsetHeight;
-                    const verticalCenter = canvasRect.top + (canvasRect.height - leaderboard.offsetHeight) / 2 + window.scrollY;
-                    leaderboard.style.top = `${verticalCenter}px`;
-                    leaderboard.style.visibility = 'visible';
-
-                    leaderboard.style.opacity = '0.85';
-                    leaderboard.style.pointerEvents = 'none';
-                    leaderboard.style.textAlign = 'center';
-                    leaderboard.style.zIndex = '0';
-                }
+                // Leaderboard: handled above, always placed behind the canvas and sized to match
             }
         }
         
