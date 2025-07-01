@@ -586,9 +586,9 @@ function getTruckDrawAngle(dir) {
                 document.getElementById('leaderboard').style.backgroundColor = 'grey';// Light background for contrast
                 ctx.fillStyle = 'red';
                 ctx.font = '20px "Press Start 2P"';
+                ctx.zIndex = '1005';
                 ctx.textAlign = 'center';
                 ctx.fillText('Game Over', canvas.width / 2, canvas.height - 90);
-                ctx.zIndex = '1005';
                 submitScore(score);
                 restartButton.style.display = 'block';
                 return;
