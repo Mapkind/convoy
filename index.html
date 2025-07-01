@@ -483,9 +483,17 @@ function drawTruck(x, y, color, angle = 0) {
     ctx.fillRect(bodyX + bodyW - tireSize + offset, bodyY + bodyH - tireSize + offset, tireSize, tireSize);
     ctx.restore();
 
-    // Draw the truck body rectangle ON TOP of the tires
+    // Draw the truck body rectangle ON TOP of the tires, with rounded top right and bottom right corners
     ctx.beginPath();
-    ctx.rect(bodyX, bodyY, bodyW, bodyH);
+    const r = Math.min(bodyW, bodyH) * 0.45; // radius for right corners
+    ctx.moveTo(bodyX, bodyY); // top left
+    ctx.lineTo(bodyX + bodyW - r, bodyY); // top edge to before top right
+    ctx.quadraticCurveTo(bodyX + bodyW, bodyY, bodyX + bodyW, bodyY + r); // round top right
+    ctx.lineTo(bodyX + bodyW, bodyY + bodyH - r); // right edge
+    ctx.quadraticCurveTo(bodyX + bodyW, bodyY + bodyH, bodyX + bodyW - r, bodyY + bodyH); // round bottom right
+    ctx.lineTo(bodyX, bodyY + bodyH); // bottom edge
+    ctx.lineTo(bodyX, bodyY); // left edge
+    ctx.closePath();
     ctx.fill();
     ctx.stroke();
     ctx.restore();
