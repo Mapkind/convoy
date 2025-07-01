@@ -456,6 +456,12 @@ function drawTruck(x, y, color, angle = 0) {
     ctx.translate(-gridSize / 2, -gridSize / 2);
 
 
+    // --- Define bodyX/bodyY/bodyW/bodyH before using them ---
+    const bodyW = gridSize * 0.9;
+    const bodyH = gridSize * 0.55;
+    const bodyX = (gridSize - bodyW) / 2;
+    const bodyY = (gridSize - bodyH) / 2;
+
     // --- Draw tires: black squares at each corner, sticking out and UNDER the body ---
     ctx.save();
     ctx.fillStyle = '#111';
