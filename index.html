@@ -497,6 +497,7 @@ function drawTruck(x, y, color, angle = 0) {
     ctx.stroke();
     ctx.restore();
 
+
     // --- Draw truck bed: 7px wide, 5px tall rectangle at the rear (left) of the truck, ON TOP of the body ---
     ctx.save();
     ctx.fillStyle = shadeColor(color, -40); // Use the same color as the body stroke
@@ -505,6 +506,16 @@ function drawTruck(x, y, color, angle = 0) {
     const bedX = bodyX - 2; // Slightly outside the left edge of the body
     const bedY = bodyY + (bodyH - bedH) / 2;
     ctx.fillRect(bedX, bedY, bedW, bedH);
+    ctx.restore();
+
+    // --- Draw cab: stroked square in the middle of the truck body ---
+    ctx.save();
+    const cabSize = Math.min(bodyW, bodyH) * 0.38;
+    const cabX = bodyX + (bodyW - cabSize) / 2;
+    const cabY = bodyY + (bodyH - cabSize) / 2;
+    ctx.strokeStyle = shadeColor(color, -40);
+    ctx.lineWidth = 2;
+    ctx.strokeRect(cabX, cabY, cabSize, cabSize);
     ctx.restore();
 
     ctx.restore();
