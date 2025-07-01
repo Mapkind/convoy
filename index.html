@@ -206,8 +206,12 @@ function resetGame() {
     //document.getElementById('leaderboard').style.color = 'white';
     //document.getElementById('leaderboard').style.backgroundColor = '#000000';
     //document.getElementById('leaderboard').style.opacity = 0.3;
+    const leaderboard = document.getElementById('leaderboard');
     console.log('Leaderboard @ Game reset', leaderboard);
-    document.getElementById('leaderboard').style.zIndex = 0;
+    leaderboard.style.zIndex = 0;
+    const gameCanvas = document.getElementById('gameCanvas');
+    gameCanvas.style.zIndex = 1;
+    console.log('gameCanvas @ Game reset', gameCanvas);
 }
 
 function startGame() {
