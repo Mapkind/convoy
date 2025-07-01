@@ -500,8 +500,8 @@ function drawTruck(x, y, color, angle = 0) {
     // --- Draw truck bed: 7px wide, 5px tall rectangle at the rear (left) of the truck, ON TOP of the body ---
     ctx.save();
     ctx.fillStyle = shadeColor(color, -40); // Use the same color as the body stroke
-    const bedW = 7;
-    const bedH = 5;
+    const bedW = 8;
+    const bedH = 7;
     const bedX = bodyX - 2; // Slightly outside the left edge of the body
     const bedY = bodyY + (bodyH - bedH) / 2;
     ctx.fillRect(bedX, bedY, bedW, bedH);
