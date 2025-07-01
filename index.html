@@ -566,22 +566,32 @@ function getTruckDrawAngle(dir) {
             }
 
             // Draw all trucks in the snake (head + collected trucks)
+            const spacing = 0.18; // space between trucks in grid units (0.18*gridSize ~ 3.6px if gridSize=20)
             for (let i = 0; i < snake.length; i++) {
                 let seg = snake[i];
                 let prevSeg = prevSnake && prevSnake[i] ? prevSnake[i] : seg;
                 // Interpolate position for smooth movement
                 let x = (prevSeg.x + (seg.x - prevSeg.x) * animProgress);
                 let y = (prevSeg.y + (seg.y - prevSeg.y) * animProgress);
+                // Offset each truck by spacing * its index, in the direction opposite to its movement
                 let angle = 0;
+                let offsetX = 0, offsetY = 0;
                 if (i === 0) {
                     angle = getTruckDrawAngle(direction);
-                } else if (i > 0) {
+                    offsetX = -direction.x * spacing * i;
+                    offsetY = -direction.y * spacing * i;
+                } else {
                     let prev = snake[i - 1];
                     let dx = prev.x - seg.x;
                     let dy = prev.y - seg.y;
                     angle = getTruckDrawAngle({ x: dx, y: dy });
+                    // Normalize dx/dy to -1,0,1
+                    if (dx !== 0) dx = dx > 0 ? 1 : -1;
+                    if (dy !== 0) dy = dy > 0 ? 1 : -1;
+                    offsetX = -dx * spacing * i;
+                    offsetY = -dy * spacing * i;
                 }
-                drawTruck(x, y, seg.color, angle);
+                drawTruck(x + offsetX, y + offsetY, seg.color, angle);
             }
 
             // Draw floating text
