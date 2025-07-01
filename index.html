@@ -603,9 +603,8 @@ function getTruckDrawAngle(dir) {
 }
 
         function draw() {
-            // Draw background
-            //ctx.fillStyle = '#f2ede2';// Light gray background #f2ede2
-            //ctx.fillRect(0, 0, canvas.width, canvas.height);
+            // Clear the canvas every frame to prevent streaks
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             // Draw countdown if active
             if (countdown > 0) {
