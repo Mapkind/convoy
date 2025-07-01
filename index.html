@@ -488,9 +488,10 @@ function drawTruck(x, y, color, angle = 0) {
     ctx.fillRect(bodyX + bodyW - tireSize + offset - 5, bodyY + bodyH - tireSize + offset, tireSize, tireSize);
     ctx.restore();
 
+
     // --- Draw main rectangle body ON TOP of the tires, with rounded top right and bottom right corners ---
     ctx.save();
-    ctx.globalAlpha = 1.0; // Make trucks fully opaque
+    ctx.globalAlpha = 1.0; // Ensure fully opaque
     ctx.fillStyle = color;
     ctx.strokeStyle = shadeColor(color, -40);
     ctx.lineWidth = 2;
@@ -508,9 +509,9 @@ function drawTruck(x, y, color, angle = 0) {
     ctx.stroke();
     ctx.restore();
 
-
     // --- Draw truck bed: 7px wide, 5px tall rectangle at the rear (left) of the truck, ON TOP of the body ---
     ctx.save();
+    ctx.globalAlpha = 1.0; // Ensure fully opaque
     ctx.fillStyle = shadeColor(color, -40); // Use the same color as the body stroke
     const bedW = 7;
     const bedH = 8;
@@ -521,6 +522,7 @@ function drawTruck(x, y, color, angle = 0) {
 
     // --- Draw cab: stroked square in the middle of the truck body ---
     ctx.save();
+    ctx.globalAlpha = 1.0; // Ensure fully opaque
     const cabSize = Math.min(bodyW, bodyH) * 0.5;
     const cabX = bodyX + (bodyW - cabSize) / 2;
     const cabY = bodyY + (bodyH - cabSize) / 2;
