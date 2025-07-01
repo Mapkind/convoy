@@ -262,6 +262,7 @@ function startGame() {
             // Position start and restart buttons 20px above the bottom of the game canvas, centered horizontally, and ensure they are within the canvas
             const startButton = document.getElementById('startButton');
             const restartButton = document.getElementById('restartButton');
+            const gameOverMessage = document.getElementById('gameOverMessage');
             if (gameCanvas) {
                 const rect = gameCanvas.getBoundingClientRect();
                 // Calculate button width and height (fallback to 120x40 if not rendered yet)
@@ -293,6 +294,15 @@ function startGame() {
                     if (gameCanvas.parentNode && restartButton.parentNode !== gameCanvas.parentNode) {
                         gameCanvas.parentNode.appendChild(restartButton);
                     }
+                }
+
+                if (gameOverMessage) {
+                    // Position game over message centered over the canvas
+                    gameOverMessage.style.position = 'absolute';
+                    gameOverMessage.style.left = (rect.left + rect.width / 2 + window.scrollX) + 'px';
+                    gameOverMessage.style.top = (rect.top + rect.height / 2 + window.scrollY) + 'px';
+                    gameOverMessage.style.transform = 'translate(-50%, -50%)';
+                    gameOverMessage.style.zIndex = '1001';
                 }
             }
             const canvasRect = canvas.getBoundingClientRect();
