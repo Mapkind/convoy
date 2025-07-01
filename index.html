@@ -64,7 +64,7 @@
     <div id="speedDisplay" style="position: absolute; color: #f2ede2; font-size: 14px;">Speed: 1</div>
     <canvas id="gameCanvas" width="400" height="400"></canvas>
 
-    <div id="leaderboard" style="position: absolute; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #1c1f1c; font-size: 14px; pointer-events: none; width: 400px; text-align: center; opacity: 0.85; z-index: 0;">
+    <div id="leaderboard" style="position: absolute; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #1c1f1c; font-size: 14px; pointer-events: none; width: 400px; text-align: center; opacity: 1; z-index: 0;">
         <h3 style="text-align: center;">Leaderboard</h3>
         <ol id="leaderboardList" style="margin:0 auto; display: inline-block; text-align: left; padding-left: 1.5em;"></ol>
     </div>
@@ -205,7 +205,7 @@ function resetGame() {
     prevSnake = null;
     //document.getElementById('leaderboard').style.color = 'white';
     //document.getElementById('leaderboard').style.backgroundColor = '#000000';
-    document.getElementById('leaderboard').style.opacity = 0.3;
+    //document.getElementById('leaderboard').style.opacity = 0.3;
     //document.getElementById('leaderboard').style.zIndex = 0;
 }
 
@@ -251,7 +251,8 @@ function startGame() {
                 leaderboard.style.width = rect.width + 'px';
                 leaderboard.style.height = rect.height + 'px';
                 leaderboard.style.zIndex = '0';
-                leaderboard.style.opacity = '0.85';
+                //leaderboard.style.opacity = '0.85';
+                leaderboard.style.opacity = '1';
                 leaderboard.style.pointerEvents = 'none';
                 leaderboard.style.textAlign = 'center';
                 leaderboard.style.display = 'block';
@@ -653,7 +654,7 @@ function getTruckDrawAngle(dir) {
 
             // If game over, overlay game over text and submit score
             if (gameOver) {
-                document.getElementById('leaderboard').style.opacity = 0.85;
+                //document.getElementById('leaderboard').style.opacity = 0.85;
                 //document.getElementById('leaderboard').style.zIndex = '1';
                 //document.getElementById('leaderboard').style.color = '#1c1f1c'; // green
                 //document.getElementById('leaderboard').style.backgroundColor = '#f2ede2';// Light background for contrast
