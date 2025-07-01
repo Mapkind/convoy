@@ -203,7 +203,7 @@ function resetGame() {
     lastFrameTime = null;
     prevSnake = null;
     document.getElementById('leaderboard').style.opacity = 0.3;
-    document.getElementById('leaderboard').style.zIndex = -1;
+    document.getElementById('leaderboard').style.zIndex = 0;
 }
 
 function startGame() {
@@ -674,7 +674,7 @@ function getTruckDrawAngle(dir) {
             // If game over, overlay game over text and submit score
             if (gameOver) {
                 document.getElementById('leaderboard').style.opacity = 0.85;
-                //document.getElementById('leaderboard').style.zIndex = '1';
+                document.getElementById('leaderboard').style.zIndex = '1';
                 document.getElementById('leaderboard').style.backgroundColor = '#f2ede2';// Light background for contrast
                 document.getElementById('gameOverMessage').style.display = 'block';
                 document.getElementById('gameOverMessage').style.zIndex = '1';
