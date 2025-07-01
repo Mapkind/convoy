@@ -474,11 +474,11 @@ function drawTruck(x, y, color, angle = 0) {
     // Offset so tires stick out from all four corners
     const offset = tireSize * 0.8;
     // Top left
-    ctx.fillRect(bodyX - offset, bodyY - offset, tireSize, tireSize);
+    ctx.fillRect(bodyX - offset, bodyY - offset + 5, tireSize, tireSize);
     // Top right (move left 5px)
     ctx.fillRect(bodyX + bodyW - tireSize + offset - 5, bodyY - offset, tireSize, tireSize);
     // Bottom left
-    ctx.fillRect(bodyX - offset, bodyY + bodyH - tireSize + offset, tireSize, tireSize);
+    ctx.fillRect(bodyX - offset, bodyY + bodyH - tireSize + offset + 5, tireSize, tireSize);
     // Bottom right (move left 5px)
     ctx.fillRect(bodyX + bodyW - tireSize + offset - 5, bodyY + bodyH - tireSize + offset, tireSize, tireSize);
     ctx.restore();
