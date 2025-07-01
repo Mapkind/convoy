@@ -579,6 +579,7 @@ function getTruckDrawAngle(dir) {
             // If game over, overlay game over text and submit score
             if (gameOver) {
                 document.getElementById('leaderboard').style.opacity = 1;
+                document.getElementById('leaderboard').style.zIndex = '1002';
                 ctx.fillStyle = 'red';
                 ctx.font = '20px "Press Start 2P"';
                 ctx.textAlign = 'center';
