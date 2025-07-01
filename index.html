@@ -485,7 +485,7 @@ function drawTruck(x, y, color, angle = 0) {
 
     // Draw the truck body rectangle ON TOP of the tires, with rounded top right and bottom right corners
     ctx.beginPath();
-    const r = Math.min(bodyW, bodyH) * 0.35; // radius for right corners
+    const r = Math.min(bodyW, bodyH) * 0.25; // radius for right corners
     ctx.moveTo(bodyX, bodyY); // top left
     ctx.lineTo(bodyX + bodyW - r, bodyY); // top edge to before top right
     ctx.quadraticCurveTo(bodyX + bodyW, bodyY, bodyX + bodyW, bodyY + r); // round top right
