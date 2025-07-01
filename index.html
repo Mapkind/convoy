@@ -265,16 +265,21 @@ function startGame() {
 
             if (isMobileDevice) {
                 console.log('Positioning displays for mobile');
-                // Move all elements to the top of the page for mobile
-                // Score: top right
+                // Center score and speed horizontally with 50px gap between them
                 scoreDisplay.style.position = 'absolute';
-                scoreDisplay.style.top = `${gap + window.scrollY}px`;
-                scoreDisplay.style.left = `calc(100vw - ${scoreDisplay.offsetWidth + gap}px)`;
-
-                // Speed: top left
                 speedDisplay.style.position = 'absolute';
+                scoreDisplay.style.top = `${gap + window.scrollY}px`;
                 speedDisplay.style.top = `${gap + window.scrollY}px`;
-                speedDisplay.style.left = `${gap + window.scrollX}px`;
+
+                // Calculate widths (fallback if not rendered yet)
+                const scoreW = scoreDisplay.offsetWidth || 80;
+                const speedW = speedDisplay.offsetWidth || 80;
+                const totalW = scoreW + speedW + 50;
+                const centerX = window.innerWidth / 2 + window.scrollX;
+                // Score: left of center
+                scoreDisplay.style.left = `${centerX - totalW/2}px`;
+                // Speed: right of score, with 50px gap
+                speedDisplay.style.left = `${centerX - totalW/2 + scoreW + 50}px`;
 
                 // Move the game canvas to the top center of the page
                 const gameCanvas = document.getElementById('gameCanvas');
