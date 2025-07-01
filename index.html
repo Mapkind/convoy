@@ -242,9 +242,9 @@ function startGame() {
             if (gameCanvas && leaderboard) {
                 const rect = gameCanvas.getBoundingClientRect();
                 // Insert leaderboard before the canvas if not already
-                if (gameCanvas.previousSibling !== leaderboard) {
+                /*if (gameCanvas.previousSibling !== leaderboard) {
                     gameCanvas.parentNode.insertBefore(leaderboard, gameCanvas);
-                }
+                }*/
                 leaderboard.style.position = 'absolute';
                 leaderboard.style.left = rect.left + window.scrollX + 'px';
                 leaderboard.style.top = rect.top + window.scrollY + 'px';
