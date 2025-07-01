@@ -185,6 +185,7 @@ function randomTruckColor() {
 }
 
 function resetGame() {
+    document.getElementById('gameOverMessage').style.display = 'none';
     // Start with a single truck (the head)
     snake = [
         { x: 10, y: 10, color: '#749b7b' } // The player's truck is always MK green
