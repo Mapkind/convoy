@@ -577,8 +577,8 @@ function getTruckDrawAngle(dir) {
                     angle = getTruckDrawAngle(direction);
                 } else if (i > 0) {
                     let prev = snake[i - 1];
-                    let dx = seg.x - prev.x;
-                    let dy = seg.y - prev.y;
+                    let dx = prev.x - seg.x;
+                    let dy = prev.y - seg.y;
                     angle = getTruckDrawAngle({ x: dx, y: dy });
                 }
                 drawTruck(x, y, seg.color, angle);
