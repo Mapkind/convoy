@@ -203,6 +203,10 @@ function resetGame() {
     animProgress = 1;
     lastFrameTime = null;
     prevSnake = null;
+
+}
+
+function startGame() {
     //document.getElementById('leaderboard').style.color = 'white';
     //document.getElementById('leaderboard').style.backgroundColor = '#000000';
     //document.getElementById('leaderboard').style.opacity = 0.3;
@@ -212,9 +216,7 @@ function resetGame() {
     const gameCanvas = document.getElementById('gameCanvas');
     gameCanvas.style.zIndex = 1;
     console.log('gameCanvas @ Game reset', gameCanvas);
-}
 
-function startGame() {
     resetGame();
     startButton.style.display = 'none';
     countdown = 3;
