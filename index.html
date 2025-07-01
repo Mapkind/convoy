@@ -65,7 +65,7 @@
     <canvas id="gameCanvas" width="400" height="400"></canvas>
 
     <div id="leaderboard" style="position: absolute; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #1c1f1c; font-size: 14px; pointer-events: none; width: 400px; text-align: center; opacity: 1; z-index: 0;">
-        <h3 style="text-align: center;">Leaderboard</h3>
+        <h3 id="leaderboardTitle" style="text-align: center;">Leaderboard</h3>
         <ol id="leaderboardList" style="margin:0 auto; display: inline-block; text-align: left; padding-left: 1.5em;"></ol>
     </div>
 
@@ -210,12 +210,18 @@ function startGame() {
     //document.getElementById('leaderboard').style.color = 'white';
     //document.getElementById('leaderboard').style.backgroundColor = '#000000';
     //document.getElementById('leaderboard').style.opacity = 0.3;
+    const leaderboardList = document.getElementById('leaderboardList');
+    const leaderboardTitle = document.getElementById('leaderboardTitle');
     const leaderboard = document.getElementById('leaderboard');
     leaderboard.style.zIndex = 0;
     console.log('Leaderboard @ Game reset', leaderboard);
     const gameCanvas = document.getElementById('gameCanvas');
     gameCanvas.style.zIndex = 1;
     console.log('gameCanvas @ Game reset', gameCanvas);
+
+    leaderboard.style.opacity = '1';
+    leaderboardList.style.opacity = '0.3';
+    leaderboardTitle.style.opacity = '0.3';
 
     resetGame();
     startButton.style.display = 'none';
@@ -245,6 +251,8 @@ function startGame() {
         function positionDisplays() {
             // Place leaderboard directly behind the canvas and match its size/position
             const leaderboard = document.getElementById('leaderboard');
+            const leaderboardList = document.getElementById('leaderboardList');
+            const leaderboardTitle = document.getElementById('leaderboardTitle');
             const gameCanvas = document.getElementById('gameCanvas');
             if (gameCanvas && leaderboard) {
                 const rect = gameCanvas.getBoundingClientRect();
@@ -258,12 +266,14 @@ function startGame() {
                 leaderboard.style.width = rect.width + 'px';
                 leaderboard.style.height = rect.height + 'px';
                 leaderboard.style.zIndex = '0';
-                //leaderboard.style.opacity = '0.85';
                 leaderboard.style.opacity = '1';
                 leaderboard.style.pointerEvents = 'none';
                 leaderboard.style.textAlign = 'center';
                 leaderboard.style.display = 'block';
                 leaderboard.style.background = '#f2ede2'; // Match the canvas background
+
+                leaderboardList.style.opacity = '1';
+                leaderboardTitle.style.opacity = '1';
             }
             const gap = 10;
             const isMobileDevice = isMobile();
@@ -660,12 +670,20 @@ function getTruckDrawAngle(dir) {
 
             // If game over, overlay game over text and submit score
             if (gameOver) {
-                //document.getElementById('leaderboard').style.opacity = 0.85;
+                const leaderboard = document.getElementById('leaderboard');
+                const leaderboardList = document.getElementById('leaderboardList');
+                const leaderboardTitle = document.getElementById('leaderboardTitle');
+                const gameOverMessage = document.getElementById('gameOverMessage');
+
+                leaderboard.style.zIndex = '1';
+                leaderboard.style.opacity = '1';
+                leaderboardList.style.opacity = '1';
+                leaderboardTitle.style.opacity = '1';
                 //document.getElementById('leaderboard').style.zIndex = '1';
                 //document.getElementById('leaderboard').style.color = '#1c1f1c'; // green
                 //document.getElementById('leaderboard').style.backgroundColor = '#f2ede2';// Light background for contrast
-                document.getElementById('gameOverMessage').style.display = 'block';
-                document.getElementById('gameOverMessage').style.zIndex = '1';
+                gameOverMessage.style.display = 'block';
+                gameOverMessage.style.zIndex = '1';
                 /*ctx.fillStyle = 'red';
                 ctx.font = '20px "Press Start 2P"';
                 ctx.zIndex = '1005';
