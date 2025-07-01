@@ -296,7 +296,8 @@ function startGame() {
                         gameCanvas.parentNode.insertBefore(leaderboard, gameCanvas.nextSibling);
                     }
                     // Set leaderboard width and center both horizontally and vertically within the canvas
-                    const leaderboardWidth = Math.max(220, Math.floor(gameCanvas.width * 0.7));
+                    //const leaderboardWidth = Math.max(220, Math.floor(gameCanvas.width * 0.7));
+                    const leaderboardWidth = '400';
                     leaderboard.style.position = 'absolute';
                     leaderboard.style.width = leaderboardWidth + 'px';
                     leaderboard.style.left = (gameCanvas.getBoundingClientRect().left + (gameCanvas.width - leaderboardWidth) / 2 + window.scrollX) + 'px';
@@ -342,7 +343,8 @@ function startGame() {
                         gameCanvas.parentNode.insertBefore(leaderboard, gameCanvas.nextSibling);
                     }
                     // Set leaderboard width and center both horizontally and vertically within the canvas
-                    const leaderboardWidth = Math.max(220, Math.floor(canvas.width * 0.7));
+                    //const leaderboardWidth = Math.max(220, Math.floor(canvas.width * 0.7));
+                    const leaderboardWidth = '400';
                     leaderboard.style.position = 'absolute';
                     leaderboard.style.width = leaderboardWidth + 'px';
                     leaderboard.style.height = '400px';
