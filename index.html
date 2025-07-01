@@ -357,15 +357,21 @@ function startGame() {
                     leaderboard.style.zIndex = '0';
                 }
             } else {
-                // Desktop: original centered overlay logic
-                // Score: right above canvas, right-aligned
+                // Desktop: center score and speed horizontally above the canvas with a 50px gap, matching mobile
+                const gap = 10;
+                // Calculate widths (fallback if not rendered yet)
+                const scoreW = scoreDisplay.offsetWidth || 80;
+                const speedW = speedDisplay.offsetWidth || 80;
+                const totalW = scoreW + speedW + 50;
+                const centerX = window.innerWidth / 2 + window.scrollX;
+                // Score: left of center
                 scoreDisplay.style.position = 'absolute';
-                scoreDisplay.style.top = `${canvasRect.top - 25 + window.scrollY}px`;
-                scoreDisplay.style.left = `${canvasRect.right - scoreDisplay.offsetWidth + window.scrollX}px`;
-                // Speed: left above canvas, left-aligned
+                scoreDisplay.style.top = `${gap + window.scrollY}px`;
+                scoreDisplay.style.left = `${centerX - totalW/2}px`;
+                // Speed: right of score, with 50px gap
                 speedDisplay.style.position = 'absolute';
-                speedDisplay.style.top = `${canvasRect.top - 25 + window.scrollY}px`;
-                speedDisplay.style.left = `${canvasRect.left + window.scrollX}px`;
+                speedDisplay.style.top = `${gap + window.scrollY}px`;
+                speedDisplay.style.left = `${centerX - totalW/2 + scoreW + 50}px`;
 
                 // Controls: just below the canvas, centered
                 if (snakeControls) {
