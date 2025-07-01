@@ -219,7 +219,7 @@ function startGame() {
     gameCanvas.style.zIndex = 1;
     console.log('gameCanvas @ Game reset', gameCanvas);
 
-    leaderboard.style.opacity = '1';
+    leaderboard.style.opacity = '0.7';
     leaderboardList.style.opacity = '0.3';
     leaderboardTitle.style.opacity = '0.3';
 
@@ -266,7 +266,7 @@ function startGame() {
                 leaderboard.style.width = rect.width + 'px';
                 leaderboard.style.height = rect.height + 'px';
                 leaderboard.style.zIndex = '0';
-                leaderboard.style.opacity = '1';
+                leaderboard.style.opacity = '0.7';
                 leaderboard.style.pointerEvents = 'none';
                 leaderboard.style.textAlign = 'center';
                 leaderboard.style.display = 'block';
