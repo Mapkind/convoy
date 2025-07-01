@@ -475,12 +475,12 @@ function drawTruck(x, y, color, angle = 0) {
     const offset = tireSize * 0.8;
     // Top left
     ctx.fillRect(bodyX - offset, bodyY - offset, tireSize, tireSize);
-    // Top right
-    ctx.fillRect(bodyX + bodyW - tireSize + offset, bodyY - offset, tireSize, tireSize);
+    // Top right (move left 5px)
+    ctx.fillRect(bodyX + bodyW - tireSize + offset - 5, bodyY - offset, tireSize, tireSize);
     // Bottom left
     ctx.fillRect(bodyX - offset, bodyY + bodyH - tireSize + offset, tireSize, tireSize);
-    // Bottom right
-    ctx.fillRect(bodyX + bodyW - tireSize + offset, bodyY + bodyH - tireSize + offset, tireSize, tireSize);
+    // Bottom right (move left 5px)
+    ctx.fillRect(bodyX + bodyW - tireSize + offset - 5, bodyY + bodyH - tireSize + offset, tireSize, tireSize);
     ctx.restore();
 
     // Draw the truck body rectangle ON TOP of the tires, with rounded top right and bottom right corners
