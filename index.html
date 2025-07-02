@@ -417,6 +417,16 @@ function startGame() {
 
                 // Leaderboard: handled above, always placed behind the canvas and sized to match
             } else {
+                
+                const gameTitle = document.getElementById('gameTitle');
+                // Position gameTitle at the top of the screen
+                if (gameTitle) {
+                    gameTitle.style.position = 'absolute';
+                    gameTitle.style.top = `${gap}px`; // Place at the very top
+                    gameTitle.style.left = '50%';
+                    gameTitle.style.transform = 'translateX(-50%)';
+                }
+
                 // Desktop: center score and speed horizontally just above the game canvas with a 50px gap
                 const gap = 10;
                 // Calculate widths (fallback if not rendered yet)
