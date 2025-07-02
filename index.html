@@ -673,9 +673,9 @@ function getTruckDrawAngle(dir) {
             if (countdown > 0) {
                 ctx.fillStyle = '#5b9472'; // MK green
                 ctx.font = `${Math.floor(canvas.width * 0.8)}px 'Press Start 2P', sans-serif`;
-                ctx.fontShadowColor = '#000000'; // black shadow
-                ctx.fontShadowOffsetX = 4;
-                ctx.fontShadowOffsetY = 4;
+                ctx.textOutline = '2px #000000'; // black outline
+                //ctx.textOutlineColor = '#000000'; // black outline
+                //ctx.textOutlineWidth = 2;
                 //ctx.shadowColor = '#000000'; // black shadow
                 //ctx.shadowOffsetX = 4;
                 //ctx.shadowOffsetY = 4;
