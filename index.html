@@ -922,8 +922,9 @@ function getTruckDrawAngle(dir) {
             }
             draw();
             if (!gameOver) requestAnimationFrame(frameLoop);
+        }
 
-// Explosion animation helpers
+// Explosion animation helpers (move to global scope)
 function drawExplosion() {
     for (let p of explosionParticles) {
         ctx.save();
@@ -946,7 +947,6 @@ function updateExplosion() {
         p.alpha *= 0.92;
     }
 }
-        }
 
         startButton.addEventListener('click', () => {
             startGame();
