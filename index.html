@@ -354,38 +354,62 @@ function startGame() {
 
             if (isMobileDevice) {
                 console.log('Positioning displays for mobile');
-                // Center score and speed horizontally with 50px gap between them
-                scoreDisplay.style.position = 'absolute';
-                speedDisplay.style.position = 'absolute';
-                scoreDisplay.style.top = `${gap + window.scrollY}px`;
-                speedDisplay.style.top = `${gap + window.scrollY}px`;
+                const gameTitle = document.getElementById('gameTitle');
+                // Position gameTitle at the top of the screen
+                if (gameTitle) {
+                    gameTitle.style.position = 'absolute';
+                    gameTitle.style.top = `${gap}px`; // Place at the very top
+                    gameTitle.style.left = '50%';
+                    gameTitle.style.transform = 'translateX(-50%)';
+                }
 
-                // Calculate widths (fallback if not rendered yet)
-                const scoreW = scoreDisplay.offsetWidth || 80;
-                const speedW = speedDisplay.offsetWidth || 80;
-                const totalW = scoreW + speedW + 50;
-                const centerX = window.innerWidth / 2 + window.scrollX;
-                // Score: left of center
-                scoreDisplay.style.left = `${centerX - totalW/2}px`;
-                // Speed: right of score, with 50px gap
-                speedDisplay.style.left = `${centerX - totalW/2 + scoreW + 50}px`;
+                // Center score and speed horizontally below the gameTitle
+                if (scoreDisplay && speedDisplay) {
+                    scoreDisplay.style.position = 'absolute';
+                    speedDisplay.style.position = 'absolute';
 
-                // Move the game canvas to the top center of the page
+                    const scoreW = scoreDisplay.offsetWidth || 80;
+                    const speedW = speedDisplay.offsetWidth || 80;
+                    const totalW = scoreW + speedW + gap;
+                    const centerX = window.innerWidth / 2;
+
+                    const scoreTop = gap + gameTitle.offsetHeight + gap;
+                    scoreDisplay.style.top = `${scoreTop}px`;
+                    scoreDisplay.style.left = `${centerX - totalW / 2}px`;
+
+                    const speedTop = scoreTop;
+                    speedDisplay.style.top = `${speedTop}px`;
+                    speedDisplay.style.left = `${centerX - totalW / 2 + scoreW + gap}px`;
+                }
+
                 const gameCanvas = document.getElementById('gameCanvas');
-                let canvasTop = gap + scoreDisplay.offsetHeight + gap + window.scrollY;
+
+                // Move the game canvas below the score and speed displays
                 if (gameCanvas) {
+                    const canvasTop = gap + gameTitle.offsetHeight + gap + scoreDisplay.offsetHeight + gap;
                     gameCanvas.style.position = 'absolute';
                     gameCanvas.style.top = `${canvasTop}px`;
-                    gameCanvas.style.left = '50vw';
+                    gameCanvas.style.left = '50%';
                     gameCanvas.style.transform = 'translateX(-50%)';
                 }
 
                 // Controls: just below the game canvas, centered
-                if (snakeControls && gameCanvas) {
+                /*if (snakeControls && gameCanvas) {
                     snakeControls.style.position = 'absolute';
                     snakeControls.style.top = `${canvasTop + gameCanvas.offsetHeight + gap}px`;
                     snakeControls.style.left = '50vw';
                     snakeControls.style.transform = 'translateX(-50%)';
+                }*/
+
+                if (gameCanvas && snakeControls) {
+                    const rect = gameCanvas.getBoundingClientRect();
+
+                    // Position snakeControls below the gameCanvas
+                    snakeControls.style.position = 'absolute';
+                    snakeControls.style.top = `${rect.bottom + gap + window.scrollY}px`; // Place below the canvas with a gap
+                    snakeControls.style.left = `${rect.left + rect.width / 2 + window.scrollX}px`; // Center horizontally
+                    snakeControls.style.transform = 'translateX(-50%)'; // Adjust for centering
+                    snakeControls.style.display = 'flex'; // Ensure controls are visible
                 }
 
                 // Leaderboard: handled above, always placed behind the canvas and sized to match
@@ -398,9 +422,14 @@ function startGame() {
                 const totalW = scoreW + speedW + 50;
                 // Get the canvas position
                 const canvasRect = canvas.getBoundingClientRect();
-                const centerX = canvasRect.left + canvasRect.width / 2 + window.scrollX;
+                //const centerX = canvasRect.left + canvasRect.width / 2 + window.scrollX;
+                const centerX = canvasRect.left + canvasRect.width / 2;
+                
                 // Place both displays just above the canvas
-                const displaysTop = canvasRect.top - (scoreDisplay.offsetHeight || 20) - gap + window.scrollY;
+                //const displaysTop = canvasRect.top - (scoreDisplay.offsetHeight || 20) - gap + window.scrollY;
+                const displaysTop = canvasRect.top - (scoreDisplay.offsetHeight || 20) - gap;
+
+                
                 // Score: left of center
                 scoreDisplay.style.position = 'absolute';
                 scoreDisplay.style.top = `${displaysTop}px`;
