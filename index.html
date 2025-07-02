@@ -750,7 +750,7 @@ function getTruckDrawAngle(dir) {
                     setTimeout(() => {
                         //explosionActive = false; // Stop explosion after last frame
                         finishGame(); // Show game over screen
-                    }, EXPLOSION_FRAMES * 100); // Wait for all frames to finish
+                    }, 2000); // Wait 2 seconds before finishing the game
                 }
 
                 function finishGame(){
