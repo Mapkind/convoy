@@ -739,29 +739,40 @@ function getTruckDrawAngle(dir) {
             // Draw floating text
             drawFloatingText();
 
-            // Draw explosion animation if active (always draw on top of trucks)
-            if (explosionActive) {
-                drawExplosion();
-            }
+
 
             // If game over, overlay game over text and submit score
             if (gameOver) {
-                const leaderboard = document.getElementById('leaderboard');
-                const leaderboardList = document.getElementById('leaderboardList');
-                const leaderboardTitle = document.getElementById('leaderboardTitle');
-                const gameOverMessage = document.getElementById('gameOverMessage');
-                const gameCanvas = document.getElementById('gameCanvas');
 
-                gameCanvas.style.zIndex = '0'; // Move canvas behind leaderboard
+                // Draw explosion animation if active (always draw on top of trucks)
+                if (explosionActive) {
+                    drawExplosion();
+                    setTimeout(() => {
+                        //explosionActive = false; // Stop explosion after last frame
+                        finishGame(); // Show game over screen
+                    }, EXPLOSION_FRAMES * 100); // Wait for all frames to finish
+                }
 
-                leaderboard.style.zIndex = '1';
-                leaderboard.style.opacity = '0.7';
-                leaderboardList.style.opacity = '1';
-                leaderboardTitle.style.opacity = '1';
-                gameOverMessage.style.display = 'block';
-                gameOverMessage.style.zIndex = '2';
-                submitScore(score);
-                restartButton.style.display = 'block';
+                function finishGame(){
+                    const leaderboard = document.getElementById('leaderboard');
+                    const leaderboardList = document.getElementById('leaderboardList');
+                    const leaderboardTitle = document.getElementById('leaderboardTitle');
+                    const gameOverMessage = document.getElementById('gameOverMessage');
+                    const gameCanvas = document.getElementById('gameCanvas');
+
+                    gameCanvas.style.zIndex = '0'; // Move canvas behind leaderboard
+
+                    leaderboard.style.zIndex = '1';
+                    leaderboard.style.opacity = '0.7';
+                    leaderboardList.style.opacity = '1';
+                    leaderboardTitle.style.opacity = '1';
+                    gameOverMessage.style.display = 'block';
+                    gameOverMessage.style.zIndex = '2';
+                    submitScore(score);
+                    restartButton.style.display = 'block';
+                }
+
+
                 return;
             }
         }
