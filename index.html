@@ -186,6 +186,15 @@ let headPopTimer = null;
 
 let leaderboard = []; // Array to store leaderboard entries
 
+// Explosion animation state
+let explosionActive = false;
+let explosionFrame = 0;
+let explosionX = 0;
+let explosionY = 0;
+const EXPLOSION_FRAMES = 24;
+const EXPLOSION_PARTICLES = 24;
+let explosionParticles = [];
+
 // Each truck is an object: { x, y, color }
 function randomTruckColor() {
     // Pick a random color for the truck body
@@ -194,6 +203,9 @@ function randomTruckColor() {
 }
 
 function resetGame() {
+    explosionActive = false;
+    explosionFrame = 0;
+    explosionParticles = [];
     document.getElementById('gameOverMessage').style.display = 'none';
     // Start with a single truck (the head)
     snake = [
@@ -818,7 +830,30 @@ function getTruckDrawAngle(dir) {
                 snake.some(segment => segment.x === newHead.x && segment.y === newHead.y)
             ) {
                 gameOver = true;
+                // Trigger explosion at head position
+                explosionActive = true;
+                explosionFrame = 0;
+                explosionX = newHead.x * gridSize + gridSize / 2;
+                explosionY = newHead.y * gridSize + gridSize / 2;
+                explosionParticles = [];
+                for (let i = 0; i < EXPLOSION_PARTICLES; i++) {
+                    const angle = (2 * Math.PI * i) / EXPLOSION_PARTICLES;
+                    const speed = 2 + Math.random() * 2;
+                    explosionParticles.push({
+                        x: explosionX,
+                        y: explosionY,
+                        vx: Math.cos(angle) * speed,
+                        vy: Math.sin(angle) * speed,
+                        radius: 6 + Math.random() * 8,
+                        color: `hsl(${Math.floor(30 + Math.random()*60)}, 90%, ${60+Math.random()*30}%)`,
+                        alpha: 1
+                    });
+                }
                 return;
+            }
+            // Draw explosion animation if active
+            if (explosionActive) {
+                drawExplosion();
             }
 
             prevSnake = snake.map(seg => ({ ...seg }));
@@ -874,6 +909,16 @@ function getTruckDrawAngle(dir) {
             let moveTime = interval;
             if (gameOver || countdown > 0) {
                 draw();
+                // Animate explosion if active
+                if (explosionActive) {
+                    explosionFrame++;
+                    updateExplosion();
+                    if (explosionFrame < EXPLOSION_FRAMES) {
+                        requestAnimationFrame(frameLoop);
+                    } else {
+                        explosionActive = false;
+                    }
+                }
                 return;
             }
             animProgress += dt / moveTime;
@@ -883,6 +928,30 @@ function getTruckDrawAngle(dir) {
             }
             draw();
             if (!gameOver) requestAnimationFrame(frameLoop);
+
+// Explosion animation helpers
+function drawExplosion() {
+    for (let p of explosionParticles) {
+        ctx.save();
+        ctx.globalAlpha = p.alpha;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, 2 * Math.PI);
+        ctx.fillStyle = p.color;
+        ctx.shadowColor = p.color;
+        ctx.shadowBlur = 16;
+        ctx.fill();
+        ctx.restore();
+    }
+}
+
+function updateExplosion() {
+    for (let p of explosionParticles) {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.radius *= 0.92;
+        p.alpha *= 0.92;
+    }
+}
         }
 
         startButton.addEventListener('click', () => {
