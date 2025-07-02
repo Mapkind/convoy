@@ -363,6 +363,9 @@ function startGame() {
                     gameTitle.style.transform = 'translateX(-50%)';
                 }
 
+                const spacingBetweenScoreAndSpeed = 50; // Specific gap between score and speed
+
+
                 // Center score and speed horizontally below the gameTitle
                 if (scoreDisplay && speedDisplay) {
                     scoreDisplay.style.position = 'absolute';
@@ -370,7 +373,7 @@ function startGame() {
 
                     const scoreW = scoreDisplay.offsetWidth || 80;
                     const speedW = speedDisplay.offsetWidth || 80;
-                    const totalW = scoreW + speedW + gap;
+                    const totalW = scoreW + speedW + spacingBetweenScoreAndSpeed;
                     const centerX = window.innerWidth / 2;
 
                     const scoreTop = gap + gameTitle.offsetHeight + gap;
@@ -379,7 +382,7 @@ function startGame() {
 
                     const speedTop = scoreTop;
                     speedDisplay.style.top = `${speedTop}px`;
-                    speedDisplay.style.left = `${centerX - totalW / 2 + scoreW + gap}px`;
+                    speedDisplay.style.left = `${centerX - totalW / 2 + scoreW + spacingBetweenScoreAndSpeed}px`;
                 }
 
                 const gameCanvas = document.getElementById('gameCanvas');
