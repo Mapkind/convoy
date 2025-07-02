@@ -420,16 +420,6 @@ function startGame() {
             else {
 
                 const gap = 10;
-                const titleGap = 100;
-
-                const gameTitle = document.getElementById('gameTitle');
-                // Position gameTitle at the top of the screen
-                if (gameTitle) {
-                    gameTitle.style.position = 'absolute';
-                    gameTitle.style.top = `${titleGap}px`; // Place at the very top
-                    gameTitle.style.left = '50%';
-                    gameTitle.style.transform = 'translateX(-50%)';
-                }
 
                 // Desktop: center score and speed horizontally just above the game canvas with a 50px gap
                 
@@ -455,6 +445,17 @@ function startGame() {
                 speedDisplay.style.position = 'absolute';
                 speedDisplay.style.top = `${displaysTop}px`;
                 speedDisplay.style.left = `${centerX - totalW/2 + scoreW + 50}px`;
+
+                const gameTitle = document.getElementById('gameTitle');
+                const titleGap = displaysTop - 100;//Place the game title 100px above the score/speed displays
+
+                // Position gameTitle at the top of the screen
+                if (gameTitle) {
+                    gameTitle.style.position = 'absolute';
+                    gameTitle.style.top = `${titleGap}px`; // Place at the very top
+                    gameTitle.style.left = '50%';
+                    gameTitle.style.transform = 'translateX(-50%)';
+                }
 
                 // Controls: just below the canvas, centered
                 if (snakeControls) {
