@@ -739,6 +739,11 @@ function getTruckDrawAngle(dir) {
             // Draw floating text
             drawFloatingText();
 
+            // Draw explosion animation if active (always draw on top of trucks)
+            if (explosionActive) {
+                drawExplosion();
+            }
+
             // If game over, overlay game over text and submit score
             if (gameOver) {
                 const leaderboard = document.getElementById('leaderboard');
@@ -753,16 +758,8 @@ function getTruckDrawAngle(dir) {
                 leaderboard.style.opacity = '0.7';
                 leaderboardList.style.opacity = '1';
                 leaderboardTitle.style.opacity = '1';
-                //document.getElementById('leaderboard').style.zIndex = '1';
-                //document.getElementById('leaderboard').style.color = '#1c1f1c'; // green
-                //document.getElementById('leaderboard').style.backgroundColor = '#f2ede2';// Light background for contrast
                 gameOverMessage.style.display = 'block';
                 gameOverMessage.style.zIndex = '2';
-                /*ctx.fillStyle = 'red';
-                ctx.font = '20px "Press Start 2P"';
-                ctx.zIndex = '1005';
-                ctx.textAlign = 'center';
-                ctx.fillText('Game Over', canvas.width / 2, canvas.height - 90);*/
                 submitScore(score);
                 restartButton.style.display = 'block';
                 return;
@@ -851,10 +848,7 @@ function getTruckDrawAngle(dir) {
                 }
                 return;
             }
-            // Draw explosion animation if active
-            if (explosionActive) {
-                drawExplosion();
-            }
+
 
             prevSnake = snake.map(seg => ({ ...seg }));
             snake.unshift(newHead); // Add new head
