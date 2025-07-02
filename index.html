@@ -855,9 +855,12 @@ function getTruckDrawAngle(dir) {
                     B = Math.min(255, Math.max(0, B + Math.round(2.55 * percent)));
                     return `#${(R.toString(16)).padStart(2,'0')}${(G.toString(16)).padStart(2,'0')}${(B.toString(16)).padStart(2,'0')}`;
                 }
+                // Calculate max speed so particles can reach the canvas edge
+                const maxCanvasDist = Math.max(canvas.width, canvas.height) / 2;
                 for (let i = 0; i < EXPLOSION_PARTICLES; i++) {
                     const angle = (2 * Math.PI * i) / EXPLOSION_PARTICLES;
-                    const speed = 2 + Math.random() * 2;
+                    // Speed so that in EXPLOSION_FRAMES, the particle travels to the edge
+                    const speed = maxCanvasDist / (EXPLOSION_FRAMES * 0.92) * (0.92 + Math.random() * 0.15); // add a little variation
                     // Particle color: random shade variation of the truck color
                     const shade = -40 + Math.random() * 80; // -40 to +40 percent
                     const color = shadeColorExplosion(baseColor, shade);
@@ -866,7 +869,7 @@ function getTruckDrawAngle(dir) {
                         y: explosionY,
                         vx: Math.cos(angle) * speed,
                         vy: Math.sin(angle) * speed,
-                        radius: 16 + Math.random() * 12, // Larger particles
+                        radius: 32 + Math.random() * 24, // Much chunkier particles
                         color: color,
                         alpha: 1
                     });
