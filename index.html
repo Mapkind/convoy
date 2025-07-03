@@ -972,6 +972,7 @@ function preloadExplosionGif() {
 }
 preloadExplosionGif();
 
+// Draw explosions for all trucks in the convoy on game over
 function drawExplosion() {
     if (!explosionGifLoaded) return;
     // Calculate frame based on time
@@ -980,11 +981,25 @@ function drawExplosion() {
     let elapsed = now - explosionGifStartTime;
     let frame = Math.floor((elapsed / explosionGifDuration) * explosionGifTotalFrames);
     if (frame >= explosionGifTotalFrames) frame = explosionGifTotalFrames - 1;
-    // Draw the GIF centered at the explosion position
-    let size = canvas.width * 0.5; // Make it big
+
     ctx.save();
     ctx.globalAlpha = 1.0;
-    ctx.drawImage(explosionGif, explosionX - size/2, explosionY - size/2, size, size);
+
+    // Draw explosion for each truck in the convoy
+    for (let i = 0; i < snake.length; i++) {
+        let seg = snake[i];
+        let px = seg.x * gridSize + gridSize / 2;
+        let py = seg.y * gridSize + gridSize / 2;
+        if (i === 0) {
+            // Head truck: big explosion (current size)
+            let size = canvas.width * 0.5;
+            ctx.drawImage(explosionGif, px - size/2, py - size/2, size, size);
+        } else {
+            // Convoy trucks: 30x30px explosion
+            let size = 30;
+            ctx.drawImage(explosionGif, px - size/2, py - size/2, size, size);
+        }
+    }
     ctx.restore();
 }
 
