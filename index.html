@@ -967,7 +967,7 @@ let explosionGifStartTime = null;
 
 function preloadExplosionGif() {
     explosionGif = new Image();
-    explosionGif.src = 'data:image/gif;base64,R0lGODlhgACAAKECAAAAzMzM/////wAAACH5BAEKAAIALAAAAACAAIAAAAIrlI+py+0Po5y02ouz3rz7D4biSJbmiabqyrbuC8fyrvdgAAOw=='; // Embedded sample, replace with your GIF's base64 or file path
+    explosionGif.src = 'explosion.gif'; // Use the actual file in your project directory
     explosionGif.onload = () => { explosionGifLoaded = true; };
 }
 preloadExplosionGif();
