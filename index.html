@@ -996,8 +996,11 @@ function drawExplosion() {
             ctx.drawImage(explosionGif, px - size/2, py - size/2, size, size);
         } else {
             // Convoy trucks explosion
-            let size = 40;
-            ctx.drawImage(explosionGif, px - size/2, py - size/2, size, size);
+            setTimeout(() => {
+                let size = 40;
+                ctx.drawImage(explosionGif, px - size/2, py - size/2, size, size);
+            }, i * 100); // Stagger explosions by 100ms per truck
+
         }
     }
     ctx.restore();
