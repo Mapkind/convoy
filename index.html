@@ -981,7 +981,7 @@ function drawExplosion() {
     let frame = Math.floor((elapsed / explosionGifDuration) * explosionGifTotalFrames);
     if (frame >= explosionGifTotalFrames) frame = explosionGifTotalFrames - 1;
     // Draw the GIF centered at the explosion position
-    let size = canvas.width * 0.7; // Make it big
+    let size = canvas.width * 0.5; // Make it big
     ctx.save();
     ctx.globalAlpha = 1.0;
     ctx.drawImage(explosionGif, explosionX - size/2, explosionY - size/2, size, size);
