@@ -192,7 +192,7 @@ let explosionFrame = 0;
 let explosionX = 0;
 let explosionY = 0;
 const EXPLOSION_FRAMES = 24;
-const EXPLOSION_PARTICLES = 24;
+const EXPLOSION_PARTICLES = 300;
 let explosionParticles = [];
 
 // Each truck is an object: { x, y, color }
@@ -857,7 +857,8 @@ function getTruckDrawAngle(dir) {
                     return `#${(R.toString(16)).padStart(2,'0')}${(G.toString(16)).padStart(2,'0')}${(B.toString(16)).padStart(2,'0')}`;
                 }
                 // Calculate max speed so particles can reach the canvas edge
-                const maxCanvasDist = Math.max(canvas.width, canvas.height) / 2;
+                const maxCanvasDist = Math.max(canvas.width, canvas.height);
+                //const maxCanvasDist = Math.max(canvas.width, canvas.height) / 2;
                 for (let i = 0; i < EXPLOSION_PARTICLES; i++) {
                     const angle = (2 * Math.PI * i) / EXPLOSION_PARTICLES;
                     // Speed so that in EXPLOSION_FRAMES, the particle travels to the edge
@@ -1253,13 +1254,13 @@ function preloadTruckImage() {
 preloadTruckImage();
 
 function initializeExplosionParticles() {
-    const maxCanvasDist = Math.max(canvas.width, canvas.height) / 2;
+    const maxCanvasDist = Math.max(canvas.width, canvas.height); // Maximum distance across the canvas
     const baseColor = snake[0]?.color || '#d15252'; // Use the head truck's color as the base
 
     explosionParticles = [];
     for (let i = 0; i < EXPLOSION_PARTICLES; i++) {
         const angle = (2 * Math.PI * i) / EXPLOSION_PARTICLES; // Spread particles evenly in all directions
-        const speed = maxCanvasDist / EXPLOSION_FRAMES * (0.8 + Math.random() * 0.4); // Add random variation to speed
+        const speed = maxCanvasDist / EXPLOSION_FRAMES * (1.5 + Math.random() * 0.5); // Increase base speed and add random variation
         const shade = -40 + Math.random() * 80; // Random shade variation
         const color = shadeColorExplosion(baseColor, shade);
 
