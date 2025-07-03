@@ -957,12 +957,13 @@ function drawExplosion() {
     for (let p of explosionParticles) {
         ctx.save();
         ctx.globalAlpha = p.alpha;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, 2 * Math.PI);
+
+        // Draw square particles
         ctx.fillStyle = p.color;
         ctx.shadowColor = p.color;
         ctx.shadowBlur = 16;
-        ctx.fill();
+        ctx.fillRect(p.x - 2.5, p.y - 2.5, 5, 5); // 5px by 5px squares centered at the particle's position
+
         ctx.restore();
     }
 }
