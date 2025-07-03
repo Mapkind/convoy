@@ -957,35 +957,39 @@ function getTruckDrawAngle(dir) {
             if (!gameOver) requestAnimationFrame(frameLoop);
         }
 
-// Explosion animation helpers (move to global scope)
+// Explosion animation using GIF
+let explosionGif = null;
+let explosionGifLoaded = false;
+let explosionGifFrame = 0;
+let explosionGifTotalFrames = 24; // Adjust if your GIF has a different frame count
+let explosionGifDuration = 1000; // ms
+let explosionGifStartTime = null;
+
+function preloadExplosionGif() {
+    explosionGif = new Image();
+    explosionGif.src = 'data:image/gif;base64,R0lGODlhgACAAKECAAAAzMzM/////wAAACH5BAEKAAIALAAAAACAAIAAAAIrlI+py+0Po5y02ouz3rz7D4biSJbmiabqyrbuC8fyrvdgAAOw=='; // Embedded sample, replace with your GIF's base64 or file path
+    explosionGif.onload = () => { explosionGifLoaded = true; };
+}
+preloadExplosionGif();
+
 function drawExplosion() {
-    for (let p of explosionParticles) {
-        ctx.save();
-        ctx.globalAlpha = p.alpha;
-
-        // Begin a new path for each particle
-        ctx.beginPath();
-
-        // Draw square particles
-        ctx.fillStyle = p.color;
-        ctx.shadowColor = p.color;
-        ctx.shadowBlur = 16;
-        ctx.fillRect(p.x - 2.5, p.y - 2.5, 5, 5); // 5px by 5px squares centered at the particle's position
-        //ctx.fill();
-        ctx.restore();
-    }
+    if (!explosionGifLoaded) return;
+    // Calculate frame based on time
+    let now = performance.now();
+    if (!explosionGifStartTime) explosionGifStartTime = now;
+    let elapsed = now - explosionGifStartTime;
+    let frame = Math.floor((elapsed / explosionGifDuration) * explosionGifTotalFrames);
+    if (frame >= explosionGifTotalFrames) frame = explosionGifTotalFrames - 1;
+    // Draw the GIF centered at the explosion position
+    let size = canvas.width * 0.7; // Make it big
+    ctx.save();
+    ctx.globalAlpha = 1.0;
+    ctx.drawImage(explosionGif, explosionX - size/2, explosionY - size/2, size, size);
+    ctx.restore();
 }
 
 function updateExplosion() {
-    for (let p of explosionParticles) {
-        p.x += p.vx; // Update x position based on velocity
-        p.y += p.vy; // Update y position based on velocity
-        p.alpha *= 0.92; // Gradually fade out the particle
-    }
-
-    // Remove particles that are fully transparent
-    explosionParticles = explosionParticles.filter(p => p.alpha > 0);
-    console.log('explosionParticles: ', explosionParticles);
+    // No-op for GIF
 }
 
         startButton.addEventListener('click', () => {
