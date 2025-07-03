@@ -992,11 +992,11 @@ function drawExplosion() {
         let py = seg.y * gridSize + gridSize / 2;
         if (i === 0) {
             // Head truck: big explosion (current size)
-            let size = canvas.width * 0.5;
+            let size = canvas.width * 0.3;
             ctx.drawImage(explosionGif, px - size/2, py - size/2, size, size);
         } else {
-            // Convoy trucks: 30x30px explosion
-            let size = 30;
+            // Convoy trucks explosion
+            let size = 40;
             ctx.drawImage(explosionGif, px - size/2, py - size/2, size, size);
         }
     }
