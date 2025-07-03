@@ -859,7 +859,7 @@ function getTruckDrawAngle(dir) {
                 // Calculate max speed so particles can reach the canvas edge
                 const maxCanvasDist = Math.max(canvas.width, canvas.height);
                 //const maxCanvasDist = Math.max(canvas.width, canvas.height) / 2;
-                for (let i = 0; i < EXPLOSION_PARTICLES; i++) {
+                /*for (let i = 0; i < EXPLOSION_PARTICLES; i++) {
                     const angle = (2 * Math.PI * i) / EXPLOSION_PARTICLES;
                     // Speed so that in EXPLOSION_FRAMES, the particle travels to the edge
                     const speed = maxCanvasDist / (EXPLOSION_FRAMES * 0.92) * (0.92 + Math.random() * 0.15); // add a little variation
@@ -875,7 +875,7 @@ function getTruckDrawAngle(dir) {
                         color: color,
                         alpha: 1
                     });
-                }
+                }*/
                 console.log('explosionParticles.push: ',explosionParticles);
                 return;
             }
