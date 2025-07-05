@@ -155,7 +155,7 @@
         window.addEventListener('DOMContentLoaded', updateControlVisibility);
         const { createClient } = supabase
         const _supabase = createClient('https://qplxbyiotkuvsvganuhn.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFwbHhieWlvdGt1dnN2Z2FudWhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTEwNTkwMTUsImV4cCI6MjA2NjYzNTAxNX0.NM4YbUhQmlqw9ugOBEYQLgVSlg2gR3RE-sTQKRXGSvk')
-        console.log('Supabase client created:', _supabase);
+        //console.log('Supabase client created:', _supabase);
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const scoreDisplay = document.getElementById('scoreDisplay');
@@ -299,7 +299,7 @@ function startGame() {
             const authModal = document.getElementById('authModal');
             
             if (isMobileDevice && authModal && gameCanvas) {
-                console.log('Positioning auth modal for mobile');
+                //console.log('Positioning auth modal for mobile');
                 // Get canvas position and size
                 const rect = gameCanvas.getBoundingClientRect();
                 // Center modal over canvas
@@ -876,7 +876,7 @@ function getTruckDrawAngle(dir) {
                         alpha: 1
                     });
                 }*/
-                console.log('explosionParticles.push: ',explosionParticles);
+                //console.log('explosionParticles.push: ',explosionParticles);
                 return;
             }
 
@@ -936,7 +936,7 @@ function getTruckDrawAngle(dir) {
                 draw();
                 // Animate explosion if active
                 if (explosionActive) {
-                    console.log('Explosion active. Triggering updateExplosion')
+                    //console.log('Explosion active. Triggering updateExplosion')
                     explosionFrame++;
                     updateExplosion();
                     drawExplosion(); // Ensure particles are drawn
@@ -1084,7 +1084,7 @@ function updateExplosion() {
                 authModal.style.display = 'block';
                 if (startButton) startButton.style.display = 'none';
             } else {
-                console.log('User is signed in:', user);
+                //console.log('User is signed in:', user);
 
                 const userid = user.id;
 
@@ -1096,17 +1096,17 @@ function updateExplosion() {
                     alert('Error fetching user data: ' + error.message);
                 }
                 else{
-                    console.log('User data:', data);
+                    //console.log('User data:', data);
                     if (data.length > 0) {
                         const userData = data[0];
                         // You can display the user's name or any other data as needed
                         if (userData.name) {
-                            console.log('User name:', userData.name);
+                            //console.log('User name:', userData.name);
                             userName = userData.name; // Store the user's name
                             authModal.style.display = 'none'; // Hide the modal
                             if (startButton) startButton.style.display = 'block'; // Allow the user to start the game
                         } else {
-                            console.log('No name found for this user.');
+                            //console.log('No name found for this user.');
                             // Optionally, you can prompt the user to enter their name
                             authModal.style.display = 'block'; // Show the modal to enter name
                             authModalTitle.textContent = 'Enter Your Name';
@@ -1131,7 +1131,7 @@ function updateExplosion() {
                                     console.error('Error updating user data:', error.message);
                                     alert('Error: ' + error.message);
                                 } else {
-                                    console.log('User data updated successfully:', name);
+                                    //console.log('User data updated successfully:', name);
                                     authModal.style.display = 'none'; // Hide the modal after successful update
                                     checkAuth(); // Recheck authentication
                                 }
@@ -1142,7 +1142,7 @@ function updateExplosion() {
                         updateLeaderboardUI(); // Update the leaderboard UI     
                     } 
                     else {
-                        console.log('No user data found for this user.');
+                        //console.log('No user data found for this user.');
                         authModal.style.display = 'block'; // Show the modal to enter name
                         authModalTitle.textContent = 'Enter Your Name';
                         authForm.innerHTML = `
@@ -1166,7 +1166,7 @@ function updateExplosion() {
                                 console.error('Error updating user data:', error.message);
                                 alert('Error: ' + error.message);
                             } else {
-                                console.log('User data updated successfully:', name);
+                                //console.log('User data updated successfully:', name);
                                 authModal.style.display = 'none'; // Hide the modal after successful update
                                 checkAuth(); // Recheck authentication
                             }
@@ -1183,7 +1183,7 @@ function updateExplosion() {
 
             if (isSignUpMode) {
                 // Sign-up logic
-                console.log('Submitting magic link for email:', email);
+                //console.log('Submitting magic link for email:', email);
                 const { data, error } = await _supabase.auth.signInWithOtp({
                     email: email,
                     options: {
@@ -1193,7 +1193,7 @@ function updateExplosion() {
                     },
                 })
                 if(!error){
-                    console.log('User signed up:', data);
+                    //console.log('User signed up:', data);
                     alert('Sign-up successful! Please check your email for the magic link.');
                     // Hide the modal after successful sign-up
                     authModal.style.display = 'none'; // Hide the modal after successful sign-up
@@ -1206,7 +1206,7 @@ function updateExplosion() {
                 }
             } 
             else {
-                console.log('Submitting magic link for email:', email);
+                //console.log('Submitting magic link for email:', email);
                 // Magic link sign-in logic
                 const { error } = await _supabase.auth.signInWithOtp({
                     email: email,
@@ -1268,7 +1268,7 @@ function preloadTruckImage() {
     truckImage.src = url;
 
     truckImage.onload = () => {
-        console.log('Truck image preloaded successfully.');
+        //console.log('Truck image preloaded successfully.');
         URL.revokeObjectURL(url); // Release the URL object
     };
 }
